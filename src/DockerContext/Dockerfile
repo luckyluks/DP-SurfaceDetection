@@ -8,7 +8,9 @@ RUN apt-get update && \
         curl \
         unzip \
         git 
+RUN apt-get install -y --no-install-recommends wget
 RUN apt-get install -y --no-install-recommends libsndfile1
+RUN ["apt-get", "install", "-y", "libsm6", "libxext6", "libxrender-dev"]
 
 # Install gosu, in order to switch to a particular user, matching the host UID, during runtime
 # From: https://denibertovic.com/posts/handling-permissions-with-docker-volumes/
