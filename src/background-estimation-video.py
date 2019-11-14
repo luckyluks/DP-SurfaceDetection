@@ -35,19 +35,20 @@ while(True):
   # Read frame
   ret, frame = cap.read()
 
-  if not ret:
-    cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-  
-  # Convert current frame to grayscale
-  frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-  # Calculate absolute difference of current frame and 
-  # the median frame
-  dframe = cv2.absdiff(frame, grayMedianFrame)
-  # Treshold to binarize
-  th, dframe = cv2.threshold(dframe, 30, 255, cv2.THRESH_BINARY)
-  # Display image
-  cv2.imshow('frame', dframe)
-  cv2.waitKey(20)
+  if ret:
+    # Convert current frame to grayscale
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # Calculate absolute difference of current frame and 
+    # the median frame
+    dframe = cv2.absdiff(frame, grayMedianFrame)
+    # Treshold to binarize
+    th, dframe = cv2.threshold(dframe, 30, 255, cv2.THRESH_BINARY)
+    # Display image
+    cv2.imshow('frame', dframe)
+    cv2.waitKey(20)
+  else:
+    print('no more frames ... replaying video')
+    cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  
 
 
 # Release video object
