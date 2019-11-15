@@ -1,15 +1,27 @@
 import numpy as np
 import cv2
 from skimage import data, filters
+import platform
 
 # Open Video
-cap = cv2.VideoCapture("C:\\Users\\lukas\\workspace\\DP-SurfaceDetection\\example_data\\video.mp4")
+print(platform.system())
+if platform.system()=="Windows":
+  print("windows os detected")
+  cap = cv2.VideoCapture("C:\\Users\\lukas\\workspace\\DP-SurfaceDetection\\example_data\\video.mp4")
+elif platform.system()=="Linux":
+  print("no windows os detected")
+  cap = cv2.VideoCapture("/home/zed/workspace/DP-SurfaceDetection/example_data/video.mp4")
+else: 
+  print("error: unsupported plattform")
+  exit(0)
 
 # Randomly select 25 frames
 frameIds = cap.get(cv2.CAP_PROP_FRAME_COUNT) * np.random.uniform(size=25)
+frameIds = range(2)
 
 # Store selected frames in an array
 frames = []
+print("used frames for median:", frameIds)
 for fid in frameIds:
     cap.set(cv2.CAP_PROP_POS_FRAMES, fid)
     ret, frame = cap.read()
