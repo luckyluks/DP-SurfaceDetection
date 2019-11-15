@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 
-video = cv2.VideoCapture(0)
-MOG = cv2.createBackgroundSubtractorMOG2(history=500, varThreshold=16, detectShadows=True)
+video = cv2.VideoCapture('video.mp4')
+MOG = cv2.createBackgroundSubtractorMOG2(history=500, varThreshold=50, detectShadows=True)
 
 while True:
     _, frame = video.read()
