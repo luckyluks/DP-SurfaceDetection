@@ -45,7 +45,7 @@ while(True):
     # Treshold to binarize
     th, dframe = cv2.threshold(dframe, 30, 255, cv2.THRESH_BINARY)
 
-    dframe = CHI(dframe,2)
+    dframe = CHI(dframe,2,50)
 
     # Display image
     cv2.imshow('frame', dframe)
