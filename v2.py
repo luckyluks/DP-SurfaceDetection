@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 from skimage import data, filters
-from CHIfunc import CHI
+import Functions as func
 
 # Open Video
 cap = cv2.VideoCapture("video.mp4")
@@ -45,7 +45,9 @@ while(True):
     # Treshold to binarize
     th, dframe = cv2.threshold(dframe, 30, 255, cv2.THRESH_BINARY)
 
-    dframe = CHI(dframe,2,50)
+    #dframe = func.ConvexHull(dframe, 50)
+    dframe = func.CHI(dframe,2,50)
+    dframe = func.ArtFilt(dframe, 50)
 
     # Display image
     cv2.imshow('frame', dframe)
