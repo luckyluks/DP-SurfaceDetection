@@ -1,10 +1,12 @@
 import numpy as np
 import cv2
+import Functions as func
+
 
 from skimage import data, filters
 
 nFramesUsed = 20
-vSpeed = 60
+vSpeed = 50
 
 
 #catch bg from bg video
@@ -20,16 +22,21 @@ cap = cv2.VideoCapture("venv/include/train1Color.mp4")
 frameIds = np.linspace(1,nFramesUsed,nFramesUsed)
 
 # Store selected frames in an array
-frames = []
-print("used frames for median:", frameIds)
-for fid in frameIds:
-    bgvid.set(cv2.CAP_PROP_POS_FRAMES, fid)
-    ret, frame = bgvid.read()
-    frames.append(frame)
+# frames = []
+# print("used frames for median:", frameIds)
+# for fid in frameIds:
+#     bgvid.set(cv2.CAP_PROP_POS_FRAMES, fid)
+#     ret, frame = bgvid.read()
+#     frames.append(frame)
 
-# Calculate the median along the time axis
-medianFrame = np.median(frames, axis=0).astype(dtype=np.uint8)
-#s
+
+# medianFrame = np.median(frames, axis=0).astype(dtype=np.uint8)
+
+# for gimp
+# cv2.imwrite('bg_median.jpg', medianFrame)
+
+medianFrame = cv2.imread("bgapp.jpg")
+
 # Display median frame
 cv2.imshow('frame', medianFrame)
 cv2.waitKey(0)
@@ -55,8 +62,17 @@ while not stop:
     dframe = cv2.absdiff(frame, grayMedianFrame)
     # Treshold to binarize
     th, dframe = cv2.threshold(dframe, 30, 255, cv2.THRESH_BINARY)
-    # Display image
-    cv2.imshow('frame', dframe)
+
+    # dframe = func.ConvexHull(dframe,50)
+    dframe = func.CHI(dframe,2,50)
+    dframe = func.ArtFilt(dframe,50)
+
+
+
+    # Display image, original image
+    dframe = np.hstack((np.true_divide(frame,255), dframe))
+
+    cv2.imshow('dframe', dframe)
     cv2.waitKey(vSpeed)
   else:
     print('no more frames ... replaying with p, quit with q')
