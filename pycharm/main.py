@@ -1,20 +1,30 @@
 import numpy as np
 import cv2
+
 from skimage import data, filters
 
+nFramesUsed = 20
+vSpeed = 60
+
+
+#catch bg from bg video
+bgvid = cv2.VideoCapture("venv/include/bgC.mp4")
 
 #input video
-cap = cv2.VideoCapture("venv/include/video.mp4")
+cap = cv2.VideoCapture("venv/include/train1Color.mp4")
 
 # Randomly select 25 frames
-frameIds = cap.get(cv2.CAP_PROP_FRAME_COUNT) * np.random.uniform(size=25)
+# frameIds = cap.get(cv2.CAP_PROP_FRAME_COUNT) * np.random.uniform(size=25)
+
+
+frameIds = np.linspace(1,nFramesUsed,nFramesUsed)
 
 # Store selected frames in an array
 frames = []
 print("used frames for median:", frameIds)
 for fid in frameIds:
-    cap.set(cv2.CAP_PROP_POS_FRAMES, fid)
-    ret, frame = cap.read()
+    bgvid.set(cv2.CAP_PROP_POS_FRAMES, fid)
+    ret, frame = bgvid.read()
     frames.append(frame)
 
 # Calculate the median along the time axis
@@ -31,8 +41,8 @@ cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
 grayMedianFrame = cv2.cvtColor(medianFrame, cv2.COLOR_BGR2GRAY)
 
 # Loop over all frames
-ret = True
-while(True):
+stop = False
+while not stop:
 
   # Read frame
   ret, frame = cap.read()
@@ -47,10 +57,13 @@ while(True):
     th, dframe = cv2.threshold(dframe, 30, 255, cv2.THRESH_BINARY)
     # Display image
     cv2.imshow('frame', dframe)
-    cv2.waitKey(20)
+    cv2.waitKey(vSpeed)
   else:
-    print('no more frames ... replaying video')
-    cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+    print('no more frames ... replaying with p, quit with q')
+    if cv2.waitKey(0) == ord('p'):
+        cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+    elif cv2.waitKey(0) == ord('q'):
+        stop=True
 
 
 # Release video object
