@@ -19,7 +19,7 @@ for fid in frameIds:
 
 # Calculate the median along the time axis
 medianFrame = np.median(frames, axis=0).astype(dtype=np.uint8)
-
+#s
 # Display median frame
 cv2.imshow('frame', medianFrame)
 cv2.waitKey(0)
