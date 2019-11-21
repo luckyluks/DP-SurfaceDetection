@@ -15,14 +15,23 @@ import cv2
 # Create a pipeline
 pipeline = rs.pipeline()
 
+
+##################### use this for live playback ##################
 #Create a config and configure the pipeline to stream
 #  different resolutions of color and depth streams
-config = rs.config()
-config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
-config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
-
+#config = rs.config()
+#config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
+#config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 # Start streaming
+#profile = pipeline.start(config)
+###################################################################
+
+##################### use this for file playback ##################
+pipeline = rs.pipeline()
+config = rs.config()
+config.enable_device_from_file("/home/zed/workspace/DP-SurfaceDetection/recordings/object_detection.bag")
 profile = pipeline.start(config)
+###################################################################
 
 # Getting the depth sensor's depth scale (see rs-align example for explanation)
 depth_sensor = profile.get_device().first_depth_sensor()
@@ -31,7 +40,7 @@ print("Depth Scale is: " , depth_scale)
 
 # We will be removing the background of objects more than
 #  clipping_distance_in_meters meters away
-clipping_distance_in_meters = 1 #1 meter
+clipping_distance_in_meters = 2.50 #1 meter
 clipping_distance = clipping_distance_in_meters / depth_scale
 
 # Create an align object
