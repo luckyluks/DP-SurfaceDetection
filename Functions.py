@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+
 def CHI(thresh, passes, cutoff):
     for i in range(1, passes):
         # Find contours of binary image
@@ -90,9 +91,11 @@ def dist_calc(cont1,cont2, min_dist):
                 return False
 
 def GrabCut(hull, img, dframe):
-
+    # Create empty matrix for adding the different detected objects
     template = np.zeros(np.shape(dframe))
 
+    # For every object detected in the hull, create a bounding box around that hull and preform GrabCut on it
+    # Then merge all these GrabCut results
     for object in hull:
         xlist = []
         ylist = []
@@ -118,3 +121,66 @@ def GrabCut(hull, img, dframe):
             template = np.add(template, dframe)
 
     return template
+
+def ChannelSplit(image):
+    b = image.copy()
+    # set green and red channels to 0
+    b[:, :, 1] = 0
+    b[:, :, 2] = 0
+
+    g = image.copy()
+    # set blue and red channels to 0
+    g[:, :, 0] = 0
+    g[:, :, 2] = 0
+
+    r = image.copy()
+    # set blue and green channels to 0
+    r[:, :, 0] = 0
+    r[:, :, 1] = 0
+
+    return r, g, b
+
+def HullCombine(hull, minDist):
+    c1 = -1
+    objList = np.zeros(np.shape(hull)[0])
+    for object1 in hull[:-1]:
+        c1 += 1
+        c2 = c1
+        for object2 in hull[c1 + 1:]:
+            merge = False
+            c2 += 1
+            for point1 in object1:
+                for point2 in object2:
+
+                    dist = np.linalg.norm(point1[0]-point2[0])
+
+                    if dist < minDist:
+                        merge = True
+            if merge:
+                objList[c2] = objList[c1]
+            else:
+                objList[c2] = c1 + 1
+
+    finalHull = []
+    for b in range(len(objList)):
+        blist = []
+        for j in range(len(objList)):
+            if objList[j] == b:
+                blist.append(hull[j][0])
+        if blist:
+            blist = np.array(blist)
+            finalHull.append(blist)
+
+    # Create an empty black image
+    drawing = np.zeros((dframe.shape[0], dframe.shape[1], 3), np.uint8)
+
+    # Draw contours and hull points
+    for i in range(len(finalHull)):
+        color = (255, 255, 255)
+        # Draw ith convex hull object and fill with white
+        cv2.drawContours(drawing, finalHull, i, color, -1, 8)
+
+    drawing = cv2.cvtColor(drawing, cv2.COLOR_BGR2GRAY)
+    ref, thresh = cv2.threshold(drawing, 40, 255, cv2.THRESH_BINARY)
+
+

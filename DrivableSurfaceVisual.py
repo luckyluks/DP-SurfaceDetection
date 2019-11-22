@@ -5,21 +5,22 @@ import Functions as func
 
 # Open Video
 cap = cv2.VideoCapture("object_detection_2.mp4")
+bg = cv2.VideoCapture('BackgroundVideo.mp4')
 
 # Randomly select 25 frames
-frameIds = cap.get(cv2.CAP_PROP_FRAME_COUNT) * np.random.uniform(size=25)
+frameIds = bg.get(cv2.CAP_PROP_FRAME_COUNT)
 
 # Store selected frames in an array
 frames = []
 for fid in frameIds:
     cap.set(cv2.CAP_PROP_POS_FRAMES, fid)
-    ret, frame = cap.read()
+    ret, frame = bg.read()
     frames.append(frame)
 
 # Calculate the median along the time axis
-#medianFrame = np.median(frames, axis=0).astype(dtype=np.uint8)
+medianFrame = np.median(frames, axis=0).astype(dtype=np.uint8)
 
-medianFrame = cv2.imread('bgapp.jpg')
+#medianFrame = cv2.imread('bgapp.jpg')
 
 # Reset frame number to 0
 cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
@@ -43,10 +44,13 @@ while(True):
     # Treshold to binarize
     th, dframe = cv2.threshold(dframe, 40, 255, cv2.THRESH_BINARY)
     # Do 2 passes to create a filled in convex hull of all moving objects
-    hullframe, _ = func.CHI(dframe,4,50)
+    hullframe, hull = func.CHI(dframe,4,50)
     # Remove small artifacts created by the background subtraction
     noArtframe = func.ArtFilt(hullframe, 300)
 
+
+    objList = func.HullCombine(hull, 30)
+    print(objList)
 
     col1 = np.hstack((np.true_divide(gframe,255), dframe))
     col2 = np.hstack((hullframe, noArtframe))
