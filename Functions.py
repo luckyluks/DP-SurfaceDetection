@@ -1,7 +1,6 @@
+import numpy as np
+import cv2
 def CHI(thresh, passes, cutoff):
-    import numpy as np
-    import cv2
-
     for i in range(1, passes):
         # Find contours of binary image
         contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -26,12 +25,9 @@ def CHI(thresh, passes, cutoff):
         drawing = cv2.cvtColor(drawing, cv2.COLOR_BGR2GRAY)
         ref, thresh = cv2.threshold(drawing, cutoff, 255, cv2.THRESH_BINARY)
 
-    return thresh
+    return thresh, hull
 
 def ArtFilt(img, min_size):
-    import numpy as np
-    import cv2
-
     # Find all your connected components
     nb_components, output, stats, centroids = cv2.connectedComponentsWithStats(img, connectivity=8)
     sizes = stats[1:, -1];
@@ -47,9 +43,6 @@ def ArtFilt(img, min_size):
     return img2
 
 def ConvexHull(thresh, min_dist):
-    import numpy as np
-    import cv2
-
     contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, 2)
     length = len(contours)
 
@@ -84,8 +77,6 @@ def ConvexHull(thresh, min_dist):
     return thresh
 
 def dist_calc(cont1,cont2, min_dist):
-    import numpy as np
-
     NOP1, NOP2 = cont1.shape[0], cont2.shape[0]
 
     for i in range(NOP1):
@@ -97,3 +88,33 @@ def dist_calc(cont1,cont2, min_dist):
                 return True
             elif i == NOP1-1 and j == NOP2-1:
                 return False
+
+def GrabCut(hull, img, dframe):
+
+    template = np.zeros(np.shape(dframe))
+
+    for object in hull:
+        xlist = []
+        ylist = []
+        for point in object:
+            xlist.append(point[0][0])
+            ylist.append(point[0][1])
+
+        x = min(xlist)
+        y = min(ylist)
+        w = max(xlist) - x
+        h = max(ylist) - y
+        rect = (x, y, w, h)
+        mask = np.zeros(img.shape[:2], np.uint8)
+        bgdModel = np.zeros((1, 65), np.float64)
+        fgdModel = np.zeros((1, 65), np.float64)
+        if w != 0 and h != 0:
+            cv2.grabCut(img, mask, rect, bgdModel, fgdModel, 5, cv2.GC_INIT_WITH_RECT)
+            mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
+            frame = img * mask2[:, :, np.newaxis]
+            grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            th, dframe = cv2.threshold(grayFrame, 1, 255, cv2.THRESH_BINARY)
+
+            template = np.add(template, dframe)
+
+    return template

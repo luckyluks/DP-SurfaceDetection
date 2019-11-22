@@ -4,7 +4,7 @@ from skimage import data, filters
 import Functions as func
 
 # Open Video
-cap = cv2.VideoCapture("video.mp4")
+cap = cv2.VideoCapture("object_detection_2.mp4")
 
 # Randomly select 25 frames
 frameIds = cap.get(cv2.CAP_PROP_FRAME_COUNT) * np.random.uniform(size=25)
@@ -17,7 +17,9 @@ for fid in frameIds:
     frames.append(frame)
 
 # Calculate the median along the time axis
-medianFrame = np.median(frames, axis=0).astype(dtype=np.uint8)
+#medianFrame = np.median(frames, axis=0).astype(dtype=np.uint8)
+
+medianFrame = cv2.imread('bgapp.jpg')
 
 # Reset frame number to 0
 cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
@@ -39,16 +41,22 @@ while(True):
     # the median frame
     dframe = cv2.absdiff(gframe, grayMedianFrame)
     # Treshold to binarize
-    th, dframe = cv2.threshold(dframe, 30, 255, cv2.THRESH_BINARY)
+    th, dframe = cv2.threshold(dframe, 40, 255, cv2.THRESH_BINARY)
     # Do 2 passes to create a filled in convex hull of all moving objects
-    hullframe = func.CHI(dframe,10,50)
+    hullframe, _ = func.CHI(dframe,4,50)
     # Remove small artifacts created by the background subtraction
     noArtframe = func.ArtFilt(hullframe, 300)
 
-    # Display image
-    cv2.imshow('FG/BG', noArtframe)
-    cv2.imshow('Original', frame)
+
+    col1 = np.hstack((np.true_divide(gframe,255), dframe))
+    col2 = np.hstack((hullframe, noArtframe))
+
+    video = np.vstack((col1, col2))
+
+    video = cv2.resize(video, (960,540))
+    cv2.imshow('Video', video)
     cv2.waitKey(20)
+
   else:
     print('no more frames ... replaying video')
     cap.set(cv2.CAP_PROP_POS_FRAMES, 0)

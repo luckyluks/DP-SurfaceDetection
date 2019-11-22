@@ -48,3 +48,14 @@ newHull = []
 for i in finalHull:
     # Creating convex hull object for each contour
     newHull.append(hull[i])
+
+
+
+
+
+# Display image
+    cv2.imshow('BG-removal w. Noise Reduction', noArtframe)
+    cv2.imshow('BG-removal w.o. Noise Reduction', hullframe)
+    cv2.imshow('Binary BG-removal', dframe)
+    cv2.imshow('Original', gframe)
+    cv2.waitKey(20)

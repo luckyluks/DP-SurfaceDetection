@@ -1,19 +1,29 @@
-import cv2
 import numpy as np
+import cv2
+from skimage import data, filters
+import Functions as func
 
-video = cv2.VideoCapture('video.mp4')
-MOG = cv2.createBackgroundSubtractorMOG2(history=500, varThreshold=50, detectShadows=True)
+# Open Video
+cap = cv2.VideoCapture("object_detection_2.mp4")
 
-while True:
-    _, frame = video.read()
-    grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    MOGframe = MOG.apply(grayFrame)
+# Randomly select 25 frames
+frameIds = cap.get(cv2.CAP_PROP_FRAME_COUNT) * np.random.uniform(size=25)
 
-    cv2.imshow("MOG", MOGframe)
+# Store selected frames in an array
+frames = []
+for fid in frameIds:
+    cap.set(cv2.CAP_PROP_POS_FRAMES, fid)
+    ret, frame = cap.read()
+    frames.append(frame)
 
-    k = cv2.waitKey(30) & 0xff
-    if k == 27:
-        break
+# Calculate the median along the time axis
+medianFrame = np.median(frames, axis=0).astype(dtype=np.uint8)
 
-video.release()
+cv2.imshow('Original', medianFrame)
+cv2.waitKey(0)
+
+# Release video object
+cap.release()
+
+# Destroy all windows
 cv2.destroyAllWindows()
