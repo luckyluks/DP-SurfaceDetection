@@ -4,10 +4,20 @@ from skimage import data, filters
 import Functions as func
 
 # Open Video
-cap = cv2.VideoCapture("object_detection_2.mp4")
+cap = cv2.VideoCapture("2.mp4")
+bg = cv2.VideoCapture('Background.mp4')
 
-# Select a image that represents the empty background
-medianFrame = cv2.imread('bgapp.jpg')
+# Randomly select 25 frames
+frameIds = bg.get(cv2.CAP_PROP_FRAME_COUNT) * np.random.uniform(size=25)
+# Store selected frames in an array
+frames = []
+for fid in frameIds:
+    cap.set(cv2.CAP_PROP_POS_FRAMES, fid)
+    ret, frame = bg.read()
+    frames.append(frame)
+
+# Calculate the median along the time axis
+medianFrame = np.median(frames, axis=0).astype(dtype=np.uint8)
 
 # Reset frame number to 0
 cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
@@ -31,7 +41,7 @@ while(True):
     # Treshold to binarize
     th, dframe = cv2.threshold(dframe, 40, 255, cv2.THRESH_BINARY)
     # Do 2 passes to create a filled in convex hull of all moving objects
-    hullframe, hull = func.CHI(dframe,10,50)
+    hullframe, hull = func.CHI(dframe, 3, 50)
     # Remove small artifacts created by the background subtraction
     noArtframe = func.ArtFilt(hullframe, 300)
 
