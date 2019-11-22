@@ -18,37 +18,35 @@ vSpeed = 50
 
 
 #catch bg from bg video
-bgvid = cv2.VideoCapture("venv/include/bgC.mp4")
+bgvid = cv2.VideoCapture("venv/include/BGCvNOV22.mp4")
 
 #input video
-cap = cv2.VideoCapture("venv/include/train1Color.mp4")
+cap = cv2.VideoCapture("venv/include/o_nov22-1.mp4")
 # cap = cv2.VideoCapture("venv/include/video.mp4")
 
 # Randomly select 25 frames
-frameIds = np.linspace(1,nFramesUsed,nFramesUsed)
-# frameIds = cap.get(cv2.CAP_PROP_FRAME_COUNT) * np.random.uniform(size=25)
-
+# frameIds = np.linspace(1,nFramesUsed,nFramesUsed)
+frameIds = bgvid.get(cv2.CAP_PROP_FRAME_COUNT) * np.random.uniform(size=25)
 
 # Store selected frames in an array
-# frames = []
-# print("used frames for median:", frameIds)
-# for fid in frameIds:
-#     bgvid.set(cv2.CAP_PROP_POS_FRAMES, fid)
-#     ret, frame = bgvid.read()
-#     frames.append(frame)
-#
+frames = []
+print("used frames for median:", frameIds)
+for fid in frameIds:
+    bgvid.set(cv2.CAP_PROP_POS_FRAMES, fid)
+    ret, frame = bgvid.read()
+    frames.append(frame)
+
 # for fid in frameIds:
 #     cap.set(cv2.CAP_PROP_POS_FRAMES, fid)
 #     ret, frame = cap.read()
 #     frames.append(frame)
 
 
-# medianFrame = np.median(frames, axis=0).astype(dtype=np.uint8)
+medianFrame = np.median(frames, axis=0).astype(dtype=np.uint8)
 
-# for gimp
+# for gimp (manual background)
 # cv2.imwrite('bg_median.jpg', medianFrame)
-
-medianFrame = cv2.imread("bgapp.jpg")
+# medianFrame = cv2.imread("bgapp.jpg")
 
 # Display median frame
 cv2.imshow('frame', medianFrame)
