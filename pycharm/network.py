@@ -28,32 +28,18 @@ from torch import optim
 import torch.nn.functional as F
 import torchvision.transforms as transforms
 
-
-class Struct:
-    def __init__(self, **entries):
-        self.__dict__.update(entries)
-
 #load config
-with open("config/ade20k-mobilenetv2dilated-c1_deepsup.yaml") as f:
-    cfg = yaml.safe_load(f)
+cfg = config.cfg
+#this model has good performance
+cfg.merge_from_file("config/ade20k-mobilenetv2dilated-c1_deepsup.yaml")
 
-
-cfg = Struct(**cfg)
-print(cfg.MODEL)
-# cfg.DATASET = AttrDict(cfg.DATASET)
-test = cfg.MODEL
-cfg.MODEL = Struct(**test)
-
-
-
+#check for use of cuda
 device = torch.device("cuda" if torch.cuda.is_available()
                                   else "cpu")
 print("using:",device)
 torch.cuda.empty_cache()
 
-gpus = 0
 
+gpus = 0
 train.main(cfg,gpus)
 
-for i in range(5):
-    print(i)

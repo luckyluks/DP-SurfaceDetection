@@ -1,8 +1,7 @@
 import torch
 import torch.nn as nn
 import torchvision
-from . import  mobilenet
-# resnet, resnext, hrnet
+from . import  mobilenet, resnet, resnext, hrnet
 from lib.nn import SynchronizedBatchNorm2d
 BatchNorm2d = SynchronizedBatchNorm2d
 
