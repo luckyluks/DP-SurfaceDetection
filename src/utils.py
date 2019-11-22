@@ -1,6 +1,7 @@
 import sys
 import os
 import time
+import shutil
 
 def generate_save_date_name(file_ending, prefix="", suffix=""):
     time_str = str(time.strftime("%Y%m%d-%H%M%S"))
@@ -24,6 +25,20 @@ def file_size(file_path):
     if os.path.isfile(file_path):
         file_info = os.stat(file_path)
         return convert_bytes(file_info.st_size)
+
+def get_disk_space(path="/", format="converted"):
+    total, used, free = shutil.disk_usage(path)
+    # total = (total // (2**30))
+    # used = (used // (2**30))
+    # free = (free // (2**30))
+    if not format=="raw":
+        total = convert_bytes(total)
+        used = convert_bytes(used)
+        free = convert_bytes(free)
+
+    return total, used, free
+
+
 
 
 def main():
