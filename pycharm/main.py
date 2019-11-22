@@ -1,9 +1,17 @@
 import numpy as np
 import cv2
 import Functions as func
-
+import pyrealsense2 as rs
 
 from skimage import data, filters
+
+# HOWTO: set exposure for
+# p = rs.pipeline()
+# prof = p.start()
+# s = prof.get_device().query_sensors()[1]
+# s.set_option(rs.option.exposure, new_value)
+# rs.option_range.default
+
 
 nFramesUsed = 20
 vSpeed = 50
@@ -14,12 +22,12 @@ bgvid = cv2.VideoCapture("venv/include/bgC.mp4")
 
 #input video
 cap = cv2.VideoCapture("venv/include/train1Color.mp4")
+# cap = cv2.VideoCapture("venv/include/video.mp4")
 
 # Randomly select 25 frames
+frameIds = np.linspace(1,nFramesUsed,nFramesUsed)
 # frameIds = cap.get(cv2.CAP_PROP_FRAME_COUNT) * np.random.uniform(size=25)
 
-
-frameIds = np.linspace(1,nFramesUsed,nFramesUsed)
 
 # Store selected frames in an array
 # frames = []
@@ -27,6 +35,11 @@ frameIds = np.linspace(1,nFramesUsed,nFramesUsed)
 # for fid in frameIds:
 #     bgvid.set(cv2.CAP_PROP_POS_FRAMES, fid)
 #     ret, frame = bgvid.read()
+#     frames.append(frame)
+#
+# for fid in frameIds:
+#     cap.set(cv2.CAP_PROP_POS_FRAMES, fid)
+#     ret, frame = cap.read()
 #     frames.append(frame)
 
 
@@ -55,24 +68,28 @@ while not stop:
   ret, frame = cap.read()
 
   if ret:
+
     # Convert current frame to grayscale
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # Calculate absolute difference of current frame and
     # the median frame
-    dframe = cv2.absdiff(frame, grayMedianFrame)
+    rawdiff = cv2.absdiff(frame, grayMedianFrame)
     # Treshold to binarize
-    th, dframe = cv2.threshold(dframe, 30, 255, cv2.THRESH_BINARY)
+    th, binaryframe = cv2.threshold(rawdiff, 30, 255, cv2.THRESH_BINARY)
 
     # dframe = func.ConvexHull(dframe,50)
-    dframe = func.CHI(dframe,2,50)
-    dframe = func.ArtFilt(dframe,50)
+    filteredFrame = func.CHI(binaryframe,2,50)
+    filteredFrame = func.ArtFilt(filteredFrame,50)
 
 
 
     # Display image, original image
-    dframe = np.hstack((np.true_divide(frame,255), dframe))
+    sframe1 = np.hstack((np.true_divide(frame,255), np.true_divide(rawdiff,255)))
+    sframe2 = np.hstack((binaryframe, filteredFrame))
 
-    cv2.imshow('dframe', dframe)
+    allframes = np.vstack((sframe1,sframe2))
+
+    cv2.imshow('allframes', allframes)
     cv2.waitKey(vSpeed)
   else:
     print('no more frames ... replaying with p, quit with q')
