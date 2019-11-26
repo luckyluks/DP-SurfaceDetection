@@ -92,6 +92,8 @@ venv.bak/
 
 #images 
 .jpg
+Frames/
+trueFrames/
 
 # Spyder project settings
 .spyderproject
