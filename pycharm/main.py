@@ -22,7 +22,7 @@ record = True
 bgvid = cv2.VideoCapture("venv/include/BGCvNOV22.mp4")
 
 #Input video
-fileName = 'o_nov22-2'
+fileName = 'o_nov22-3'
 cap = cv2.VideoCapture('venv/include/'+fileName+'.mp4')
 
 #Create output folders

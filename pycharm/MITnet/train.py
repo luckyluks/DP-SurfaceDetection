@@ -9,11 +9,11 @@ from distutils.version import LooseVersion
 import torch
 import torch.nn as nn
 # Our libs
-from config import cfg
-from dataset import TrainDataset
-from models import ModelBuilder, SegmentationModule
-from utils import AverageMeter, parse_devices, setup_logger
-from lib.nn import UserScatteredDataParallel, user_scattered_collate, patch_replication_callback
+from MITnet.config import cfg
+from MITnet.dataset import TrainDataset
+from MITnet.models import ModelBuilder, SegmentationModule
+from MITnet.utils import AverageMeter, parse_devices, setup_logger
+from MITnet.lib.nn import UserScatteredDataParallel, user_scattered_collate, patch_replication_callback
 
 
 # train one epoch

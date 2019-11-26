@@ -4,19 +4,18 @@ import cv2
 import torch
 import os
 import yaml
-import caffe2
-
 
 #own imports
 import Functions as func
 
 #imports from MIT-sem-segm model
-import config
-import dataset
-import lib.nn
-import models
-import utils
-import train
+import MITnet.config
+import MITnet.dataset
+import MITnet.lib.nn
+import MITnet.models
+import MITnet.utils
+import MITnet.train
+import MITnet.eval
 
 #deep learning imports
 from sklearn.model_selection import train_test_split
@@ -29,9 +28,9 @@ import torch.nn.functional as F
 import torchvision.transforms as transforms
 
 #load config
-cfg = config.cfg
+cfg = MITnet.config.cfg
 #this model has good performance
-cfg.merge_from_file("config/ade20k-mobilenetv2dilated-c1_deepsup.yaml")
+cfg.merge_from_file("MITnet/config/ade20k-mobilenetv2dilated-c1_deepsup.yaml")
 
 #check for use of cuda
 device = torch.device("cuda" if torch.cuda.is_available()
@@ -41,5 +40,5 @@ torch.cuda.empty_cache()
 
 
 gpus = [0]
-train.main(cfg,gpus)
+MITnet.train.main(cfg,gpus)
 
