@@ -31,7 +31,6 @@ class SegmentationModule(SegmentationModuleBase):
         # training
         if segSize is None:
             if self.deep_sup_scale is not None: # use deep supervision technique
-                feed_dict[0]['img_data'].to('cuda')
                 (pred, pred_deepsup) = self.decoder(self.encoder(feed_dict[0]['img_data'], return_feature_maps=True))   #EDITS
             else:
                 pred = self.decoder(self.encoder(feed_dict['img_data'], return_feature_maps=True))
@@ -315,7 +314,6 @@ class MobileNetV2Dilated(nn.Module):
         if return_feature_maps:
             conv_out = []
             for i in range(self.total_idx):
-                x.to('cuda')                     #EDITS
                 x = self.features[i](x)
                 if i in self.down_idx:
                     conv_out.append(x)
