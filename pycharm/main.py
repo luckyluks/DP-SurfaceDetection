@@ -2,13 +2,14 @@ import numpy as np
 import cv2
 import Functions as func
 import pyrealsense2 as rs
+import os
 
 from skimage import data, filters
 
 # HOWTO: set exposure for
 # p = rs.pipeline()
 # prof = p.start()
-# s = prof.get_device().query_sensors()[1]
+# s = prof.get_device().query_sensor'data/trueFrames/'+fileName+'-true/frame'+str(frameCounter)+'.jpg's()[1]
 # s.set_option(rs.option.exposure, new_value)
 # rs.option_range.default
 
@@ -21,7 +22,12 @@ record = True
 bgvid = cv2.VideoCapture("venv/include/BGCvNOV22.mp4")
 
 #Input video
-cap = cv2.VideoCapture("venv/include/o_nov22-1.mp4")
+fileName = 'o_nov22-1'
+cap = cv2.VideoCapture('venv/include/'+fileName+'.mp4')
+
+#Create output folders
+os.makedirs('data/Frames/'+fileName, exist_ok=True)
+os.makedirs('data/trueFrames/'+fileName+'-true', exist_ok=True)
 
 #Get video data
 frameWidth = int(cap.get(3))
@@ -31,7 +37,7 @@ nrOfFrames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 print(nrOfFrames)
 
 #Init videowriter
-truthOut = cv2.VideoWriter('truth.mp4', cv2.VideoWriter_fourcc(*'mp4v'), fps, (frameWidth, frameHeight))
+# truthOut = cv2.VideoWriter('truth.mp4', cv2.VideoWriter_fourcc(*'mp4v'), fps, (frameWidth, frameHeight))
 
 # Randomly select 25 frames
 # frameIds = np.linspace(1,nFramesUsed,nFramesUsed)
@@ -109,7 +115,7 @@ if not record:
 
     # Release video object
     cap.release()
-    truthOut.release()
+    # truthOut.release()
 
     # Destroy all windows
     cv2.destroyAllWindows()
@@ -121,6 +127,9 @@ else:
 
         # Read frame
         ret, frame = cap.read()
+
+        # Save frame
+        cv2.imwrite('data/Frames/'+fileName+'/frame'+str(frameCounter)+'.jpg', frame)
 
         # Convert current frame to grayscale
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -137,7 +146,8 @@ else:
         # save truth (filtered frame)
         U8frame = np.uint8(filteredFrame)
         U8frame = cv2.cvtColor(U8frame, cv2.COLOR_GRAY2BGR)
-        truthOut.write(U8frame)
+        # truthOut.write(U8frame)
+        cv2.imwrite('data/trueFrames/'+fileName+'-true/frame'+str(frameCounter)+'.jpg', U8frame)
 
         # Display image, original image
         sframe1 = np.hstack((np.true_divide(frame, 255), np.true_divide(rawdiff, 255)))
@@ -156,7 +166,7 @@ else:
 
     # Release video object
     cap.release()
-    truthOut.release()
+    # truthOut.release()
 
     # Destroy all windows
     cv2.destroyAllWindows()
