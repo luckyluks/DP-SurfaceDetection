@@ -158,7 +158,7 @@ class TrainDataset(BaseDataset):
             segm_path = os.path.join(self.root_dataset, this_record['fpath_segm'])
 
             img = Image.open(image_path).convert('RGB')
-            segm = Image.open(segm_path)
+            segm = Image.open(segm_path).convert('L')
             assert(segm.mode == "L")
             assert(img.size[0] == segm.size[0])
             assert(img.size[1] == segm.size[1])

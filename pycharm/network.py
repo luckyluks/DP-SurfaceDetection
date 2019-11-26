@@ -40,6 +40,6 @@ print("using:",device)
 torch.cuda.empty_cache()
 
 
-gpus = 0
+gpus = [0]
 train.main(cfg,gpus)
 

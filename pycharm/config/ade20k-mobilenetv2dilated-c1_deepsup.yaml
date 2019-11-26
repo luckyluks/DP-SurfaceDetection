@@ -30,6 +30,7 @@ TRAIN:
   workers: 16
   disp_iter: 20
   seed: 304
+  max_iters: 10000
 
 VAL:
   visualize: False
