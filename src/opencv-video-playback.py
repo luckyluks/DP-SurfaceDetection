@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 
-cap = cv2.VideoCapture('recordings/object_detection_depth_2.mp4')
+cap = cv2.VideoCapture('recordings/old/object_detection_depth_2.mp4')
 print(cap.isOpened())
 
 # Loop over all frames

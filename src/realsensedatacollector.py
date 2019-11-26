@@ -45,8 +45,8 @@ def record_runs(is_test_run=False, is_long_warmup_run=False, clip_length=30, war
 
 
     if not is_test_run:
-        file_path_rgb = os.path.join(directory,generate_save_date_name('.mp4', 'object_detection_{}s'.format(clip_length) ))
-        file_path_depth = os.path.join(directory,generate_save_date_name('.mp4', 'object_detection_depth_{}s'.format(clip_length) ))
+        file_path_rgb = os.path.join(directory,generate_save_date_name('.mp4', '{}s'.format(clip_length) ))
+        file_path_depth = os.path.join(directory,generate_save_date_name('.mp4', 'depth_{}s'.format(clip_length) ))
 
         out = cv2.VideoWriter(file_path_rgb, codec, framerate, (frame_width,frame_height))
         out_depth = cv2.VideoWriter(file_path_depth, codec, framerate, (frame_width,frame_height))
