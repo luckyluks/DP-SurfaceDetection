@@ -8,6 +8,11 @@ def generate_save_date_name(file_ending, prefix="", suffix=""):
     full_suffix = ( prefix+"_" if prefix!="" else "") + time_str + ( "_"+suffix if suffix!="" else "") + file_ending
     return full_suffix
 
+def generate_save_date_name_short(file_ending, prefix="", suffix=""):
+    time_str = str(time.strftime("%b%d"))
+    full_suffix = ( prefix+"_" if prefix!="" else "") + time_str + ( "_"+suffix if suffix!="" else "") + file_ending
+    return full_suffix
+
 def convert_bytes(num):
     """
     this function will convert bytes to MB.... GB... etc
