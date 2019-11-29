@@ -150,7 +150,7 @@ def RGBConvexHull(frame, rMedian, gMedian, bMedian, rT, gT, bT):
 
     return dframe
 
-def HullCombine(hull, minDist):
+def HullCombine(hull, minDist, dframe):
     c1 = -1
     objList = np.zeros(np.shape(hull)[0])
     for object1 in hull[:-1]:
