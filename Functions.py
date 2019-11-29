@@ -133,6 +133,23 @@ def ChannelSplit(image):
 
     return r, g, b
 
+def RGBConvexHull(frame, rMedian, gMedian, bMedian, rT, gT, bT):
+
+    rFrame, gFrame, bFrame = ChannelSplit(frame)
+    rDiffFrame = cv2.absdiff(rFrame, rMedian)
+    gDiffFrame = cv2.absdiff(gFrame, gMedian)
+    bDiffFrame = cv2.absdiff(bFrame, bMedian)
+    # Treshold to binarize
+    _, rDiffFrame = cv2.threshold(rDiffFrame, rT, 255, cv2.THRESH_BINARY)
+    _, gDiffFrame = cv2.threshold(gDiffFrame, gT, 255, cv2.THRESH_BINARY)
+    _, bDiffFrame = cv2.threshold(bDiffFrame, bT, 255, cv2.THRESH_BINARY)
+
+    dframe = np.add(np.add(np.asarray(rDiffFrame), np.asarray(gDiffFrame)), np.asarray(bDiffFrame))
+
+    dframe[dframe > 0] = 255
+
+    return dframe
+
 def HullCombine(hull, minDist):
     c1 = -1
     objList = np.zeros(np.shape(hull)[0])

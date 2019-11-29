@@ -35,21 +35,8 @@ while True:
 
   if ret:
 
-    rFrame, gFrame, bFrame = func.ChannelSplit(frame)
-    # Calculate absolute difference of current frame and
-    # the median frame
-    rDiffFrame = cv2.absdiff(rFrame, rMedian)
-    gDiffFrame = cv2.absdiff(gFrame, gMedian)
-    bDiffFrame = cv2.absdiff(bFrame, bMedian)
-    # Treshold to binarize
-    _, rDiffFrame = cv2.threshold(rDiffFrame, 40, 255, cv2.THRESH_BINARY)
-    _, gDiffFrame = cv2.threshold(gDiffFrame, 40, 255, cv2.THRESH_BINARY)
-    _, bDiffFrame = cv2.threshold(bDiffFrame, 40, 255, cv2.THRESH_BINARY)
-
-    dframe = np.add(np.add(np.asarray(rDiffFrame), np.asarray(gDiffFrame)), np.asarray(bDiffFrame))
-
-    dframe[dframe > 0] = 255
-
+    dframe = func.RGBConvexHull(frame, rMedian, gMedian, bMedian)
+    gframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # Do 2 passes to create a filled in convex hull of all moving objects
     hullframe, hull = func.CHI(dframe, 2, 50)
     # Remove small artifacts created by the background subtraction
@@ -57,7 +44,7 @@ while True:
 
     GrabCutFrame = func.GrabCut(hull, frame, dframe)
 
-    col1 = np.hstack((np.true_divide(rFrame,255), dframe))
+    col1 = np.hstack((np.true_divide(gframe,255), dframe))
     col2 = np.hstack((GrabCutFrame, noArtframe))
 
     video = np.vstack((col1, col2))
