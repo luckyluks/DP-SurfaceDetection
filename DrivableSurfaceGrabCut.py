@@ -4,7 +4,7 @@ from skimage import data, filters
 import Functions as func
 
 # Open Video
-cap = cv2.VideoCapture("2.mp4")
+cap = cv2.VideoCapture("8.mp4")
 bg = cv2.VideoCapture('Background.mp4')
 
 # Randomly select 25 frames
@@ -27,7 +27,7 @@ grayMedianFrame = cv2.cvtColor(medianFrame, cv2.COLOR_BGR2GRAY)
 
 # Loop over all frames
 ret = True
-while(True):
+while True:
 
   # Read frame
   ret, frame = cap.read()
@@ -41,7 +41,7 @@ while(True):
     # Treshold to binarize
     th, dframe = cv2.threshold(dframe, 40, 255, cv2.THRESH_BINARY)
     # Do 2 passes to create a filled in convex hull of all moving objects
-    hullframe, hull = func.CHI(dframe, 3, 50)
+    hullframe, hull = func.CHI(dframe, 2, 50)
     # Remove small artifacts created by the background subtraction
     noArtframe = func.ArtFilt(hullframe, 300)
 

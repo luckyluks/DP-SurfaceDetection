@@ -4,7 +4,7 @@ from skimage import data, filters
 import Functions as func
 
 # Open Video
-cap = cv2.VideoCapture("2.mp4")
+cap = cv2.VideoCapture("8.mp4")
 bg = cv2.VideoCapture('Background.mp4')
 
 # Randomly select 25 frames
