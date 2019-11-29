@@ -3,9 +3,6 @@ import cv2
 import Functions as func
 import os
 
-#video playback speed
-vSpeed = 50
-
 #declare input data path
 dataPath = 'venv/include/'
 folders = []
@@ -80,8 +77,9 @@ for fold in folders:
                 # save truth (filtered frame)
                 U8frame = np.uint8(filteredFrame)
                 U8frame = cv2.cvtColor(U8frame, cv2.COLOR_GRAY2BGR)
-
                 cv2.imwrite('data/trueFrames/frame' + str(totalCounter) + '.jpg', U8frame)
+
+                #increase filename counter
                 totalCounter +=1
 
             frameCounter += 1
