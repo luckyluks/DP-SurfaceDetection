@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="3585ce6b-dc51-42ac-86d1-4320ee4b7d74" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/.idea/semantic-segmentation-pytorch-master.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/LICENSE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/config/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/config/ade20k-hrnetv2.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/config/ade20k-mobilenetv2dilated-c1_deepsup.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/config/ade20k-resnet101-upernet.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/config/ade20k-resnet101dilated-ppm_deepsup.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/config/ade20k-resnet18dilated-ppm_deepsup.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/config/ade20k-resnet50-upernet.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/config/ade20k-resnet50dilated-ppm_deepsup.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/config/defaults.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/data/color150.mat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/data/object150_info.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/data/randframe.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/data/training.odgt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/data/validation.odgt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/dataset.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/demo_test.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/download_ADE20K.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/eval.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/eval_multipro.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/nn/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/nn/modules/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/nn/modules/batchnorm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/nn/modules/comm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/nn/modules/replicate.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/nn/modules/tests/test_numeric_batchnorm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/nn/modules/tests/test_sync_batchnorm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/nn/modules/unittest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/nn/parallel/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/nn/parallel/data_parallel.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/utils/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/utils/data/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/utils/data/dataloader.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/utils/data/dataset.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/utils/data/distributed.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/utils/data/sampler.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/lib/utils/th.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/models/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/models/hrnet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/models/mobilenet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/models/models.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/models/resnet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/models/resnext.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/models/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/requirements.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/teaser/ADE_val_00000278.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/teaser/ADE_val_00001519.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/test.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/train.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../MIT-network-source/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/pycharm.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Functions.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITgenerateODGT.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/config/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/config/ade20k-hrnetv2.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/config/ade20k-mobilenetv2dilated-c1_deepsup.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/config/ade20k-resnet101-upernet.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/config/ade20k-resnet101dilated-ppm_deepsup.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/config/ade20k-resnet18dilated-ppm_deepsup.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/config/ade20k-resnet50-upernet.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/config/ade20k-resnet50dilated-ppm_deepsup.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/config/defaults.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/dataset.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/eval.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/nn/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/nn/modules/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/nn/modules/batchnorm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/nn/modules/comm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/nn/modules/replicate.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/nn/modules/tests/test_numeric_batchnorm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/nn/modules/tests/test_sync_batchnorm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/nn/modules/unittest.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/nn/parallel/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/nn/parallel/data_parallel.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/utils/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/utils/data/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/utils/data/dataloader.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/utils/data/dataset.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/utils/data/distributed.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/utils/data/sampler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/lib/utils/th.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/models/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/models/hrnet.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/models/mobilenet.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/models/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/models/resnet.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/models/resnext.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/models/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/train.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnet/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MITnetwork.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/color150.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/object150_info.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/training.odgt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/validation.odgt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/demos/pointCloud.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/demos/realsense-background-removal.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained/mobilenet_v2.pth.tar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/record.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/truth.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/.idea/semantic-segmentation-pytorch-master.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/config/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/config/ade20k-hrnetv2.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/config/ade20k-mobilenetv2dilated-c1_deepsup.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/config/ade20k-resnet101-upernet.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/config/ade20k-resnet101dilated-ppm_deepsup.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/config/ade20k-resnet18dilated-ppm_deepsup.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/config/ade20k-resnet50-upernet.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/config/ade20k-resnet50dilated-ppm_deepsup.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/config/defaults.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/data/color150.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/data/object150_info.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/data/randframe.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/data/training.odgt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/data/validation.odgt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/dataset.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/demo_test.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/download_ADE20K.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/eval.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/eval_multipro.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/nn/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/nn/modules/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/nn/modules/batchnorm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/nn/modules/comm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/nn/modules/replicate.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/nn/modules/tests/test_numeric_batchnorm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/nn/modules/tests/test_sync_batchnorm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/nn/modules/unittest.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/nn/parallel/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/nn/parallel/data_parallel.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/utils/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/utils/data/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/utils/data/dataloader.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/utils/data/dataset.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/utils/data/distributed.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/utils/data/sampler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/lib/utils/th.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/models/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/models/hrnet.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/models/mobilenet.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/models/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/models/resnet.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/models/resnext.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/models/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/requirements.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/teaser/ADE_val_00000278.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/teaser/ADE_val_00001519.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/train.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../semantic-segmentation-pytorch-master/utils.py" beforeDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1TsRiGigEE1lMtBIw6YmxmtkILm" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../src" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/MITnet" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.MITnetwork">
+    <configuration name="MITnetwork" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="pycharm" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MITnetwork.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="imageResize" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="pycharm" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data/Frames" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data/Frames/imageResize.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="pycharm" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="network" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="pycharm" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/network.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="record" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="pycharm" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/record.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.MITnetwork" />
+        <item itemvalue="Python.record" />
+        <item itemvalue="Python.main" />
+        <item itemvalue="Python.imageResize" />
+        <item itemvalue="Python.network" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3585ce6b-dc51-42ac-86d1-4320ee4b7d74" name="Default Changelist" comment="" />
+      <created>1574246942453</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1574246942453</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/lib/nn/modules/tests/test_sync_batchnorm.py</url>
+          <line>8</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/MITnet/train.py</url>
+          <line>42</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/MITnet/dataset.py</url>
+          <line>192</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
