@@ -18,12 +18,16 @@ from skimage import data, filters
 vSpeed = 50
 record = True
 
+for subdirs, dirs, files in os.walk('venv/include'):
+    print(subdirs)
+
+
 #BG video
-bgvid = cv2.VideoCapture("venv/include/BGCvNOV22.mp4")
+# bgvid = cv2.VideoCapture("venv/include/bg_outsidelab_nov26.mp4")
 
 #Input video
-fileName = 'o_nov22-3'
-cap = cv2.VideoCapture('venv/include/'+fileName+'.mp4')
+# fileName = 'o_nov26_out_30'
+# cap = cv2.VideoCapture('venv/include/'+fileName+'.mp4')
 
 #Create output folders
 os.makedirs('data/Frames/'+fileName, exist_ok=True)
@@ -32,12 +36,8 @@ os.makedirs('data/trueFrames/'+fileName+'-true', exist_ok=True)
 #Get video data
 frameWidth = int(cap.get(3))
 frameHeight = int(cap.get(4))
-fps = cap.get(cv2.CAP_PROP_FPS)
 nrOfFrames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 print(nrOfFrames)
-
-#Init videowriter
-# truthOut = cv2.VideoWriter('truth.mp4', cv2.VideoWriter_fourcc(*'mp4v'), fps, (frameWidth, frameHeight))
 
 # Randomly select 25 frames
 # frameIds = np.linspace(1,nFramesUsed,nFramesUsed)
@@ -72,7 +72,6 @@ cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
 
 # Convert background to grayscale
 grayMedianFrame = cv2.cvtColor(medianFrame, cv2.COLOR_BGR2GRAY)
-
 
 # Loop over all frames
 if not record:
@@ -121,53 +120,58 @@ if not record:
     cv2.destroyAllWindows()
     print(i)
 else:
-    frameCounter = 1
-    stop = False
-    while not stop:
+    totalCounter = 1
+    for iFolder in range(nrOfFolders):
 
-        # Read frame
-        ret, frame = cap.read()
+        for iVideo in range(nrOfVideos):
+            frameCounter = 1
 
-        # Save frame
-        cv2.imwrite('data/Frames/'+fileName+'/frame'+str(frameCounter)+'.jpg', frame)
+            stop = False
+            while not stop:
 
-        # Convert current frame to grayscale
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        # Calculate absolute difference of current frame and
-        # the median frame
-        rawdiff = cv2.absdiff(frame, grayMedianFrame)
-        # Treshold to binarize
-        th, binaryframe = cv2.threshold(rawdiff, 30, 255, cv2.THRESH_BINARY)
+                # Read frame
+                ret, frame = cap.read()
 
-        # dframe = func.ConvexHull(dframe,50)
-        filteredFrame = func.CHI(binaryframe, 2, 50)
-        filteredFrame = func.ArtFilt(filteredFrame, 50)
+                # Save frame
+                cv2.imwrite('data/Frames/'+fileName+'/frame'+str(totalCounter)+'.jpg', frame)
 
-        # save truth (filtered frame)
-        U8frame = np.uint8(filteredFrame)
-        U8frame = cv2.cvtColor(U8frame, cv2.COLOR_GRAY2BGR)
-        # truthOut.write(U8frame)
-        cv2.imwrite('data/trueFrames/'+fileName+'-true/frame'+str(frameCounter)+'.jpg', U8frame)
+                # Convert current frame to grayscale
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                # Calculate absolute difference of current frame and
+                # the median frame
+                rawdiff = cv2.absdiff(frame, grayMedianFrame)
+                # Treshold to binarize
+                th, binaryframe = cv2.threshold(rawdiff, 30, 255, cv2.THRESH_BINARY)
 
-        # Display image, original image
-        sframe1 = np.hstack((np.true_divide(frame, 255), np.true_divide(rawdiff, 255)))
-        sframe2 = np.hstack((binaryframe, filteredFrame))
+                # dframe = func.ConvexHull(dframe,50)
+                filteredFrame = func.CHI(binaryframe, 2, 50)
+                filteredFrame = func.ArtFilt(filteredFrame, 50)
 
-        allframes = np.vstack((sframe1, sframe2))
+                # save truth (filtered frame)
+                U8frame = np.uint8(filteredFrame)
+                U8frame = cv2.cvtColor(U8frame, cv2.COLOR_GRAY2BGR)
+                cv2.imwrite('data/trueFrames/'+fileName+'-true/frame'+str(totalCounter)+'.jpg', U8frame)
 
-        cv2.imshow('allframes', allframes)
-        cv2.waitKey(vSpeed)
+                # Display image, original image
+                sframe1 = np.hstack((np.true_divide(frame, 255), np.true_divide(rawdiff, 255)))
+                sframe2 = np.hstack((binaryframe, filteredFrame))
 
-        frameCounter += 1
-        if frameCounter > nrOfFrames:
-            stop = True
-            print('no more frames, recording done')
+                allframes = np.vstack((sframe1, sframe2))
+
+                cv2.imshow('allframes', allframes)
+                cv2.waitKey(vSpeed)
+
+                frameCounter += 1
+                if frameCounter > nrOfFrames:
+                    stop = True
+                    print('no more frames, recording done')
 
 
-    # Release video object
-    cap.release()
-    # truthOut.release()
+            # Release video object
+            cap.release()
+            # truthOut.release()
 
-    # Destroy all windows
-    cv2.destroyAllWindows()
-    print(frameCounter)
+            # Destroy all windows
+            cv2.destroyAllWindows()
+
+

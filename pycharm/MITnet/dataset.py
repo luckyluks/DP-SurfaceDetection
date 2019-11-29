@@ -59,7 +59,7 @@ class BaseDataset(torch.utils.data.Dataset):
 
     def segm_transform(self, segm):
         # to tensor, -1 to 149
-        segm = torch.from_numpy(np.array(segm)).long() - 1
+        segm = torch.from_numpy(np.array(segm)).long() # - 1   #EDIT
         return segm
 
     # Round x to the nearest multiple of p and x' >= x
@@ -158,8 +158,8 @@ class TrainDataset(BaseDataset):
             segm_path = os.path.join(self.root_dataset, this_record['fpath_segm'])
 
             img = Image.open(image_path).convert('RGB')
-            segm = Image.open(segm_path).convert('L')
-            assert(segm.mode == "L")
+            segm = Image.open(segm_path).convert('1')
+            # assert(segm.mode == "L")
             assert(img.size[0] == segm.size[0])
             assert(img.size[1] == segm.size[1])
 
@@ -172,10 +172,10 @@ class TrainDataset(BaseDataset):
             img = imresize(img, (batch_widths[i], batch_heights[i]), interp='bilinear')
             segm = imresize(segm, (batch_widths[i], batch_heights[i]), interp='nearest')
 
-            # further downsample seg label, need to avoid seg label misalignment
+            # # further downsample seg label, need to avoid seg label misalignment
             segm_rounded_width = self.round2nearest_multiple(segm.size[0], self.segm_downsampling_rate)
             segm_rounded_height = self.round2nearest_multiple(segm.size[1], self.segm_downsampling_rate)
-            segm_rounded = Image.new('L', (segm_rounded_width, segm_rounded_height), 0)
+            segm_rounded = Image.new('1', (segm_rounded_width, segm_rounded_height), 0)
             segm_rounded.paste(segm, (0, 0))
             segm = imresize(
                 segm_rounded,
@@ -187,7 +187,7 @@ class TrainDataset(BaseDataset):
             img = self.img_transform(img)
 
             # segm transform, to torch long tensor HxW
-            segm = self.segm_transform(segm)
+            segm = self.segm_transform(segm)   #edited
 
             # put into batch arrays
             batch_images[i][:, :img.shape[1], :img.shape[2]] = img
