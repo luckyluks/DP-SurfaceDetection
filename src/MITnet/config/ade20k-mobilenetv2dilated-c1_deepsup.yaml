@@ -2,7 +2,7 @@ DATASET:
   root_dataset: "./data/"
   list_train: "./data/training.odgt"
   list_val: "./data/validation.odgt"
-  num_class: 150
+  num_class: 2
   imgSizes: (300, 375, 450, 525, 600)
   imgMaxSize: 320
   padding_constant: 8
@@ -33,7 +33,7 @@ TRAIN:
   max_iters: 10000
 
 VAL:
-  visualize: False
+  visualize: True
   checkpoint: "epoch_20.pth"
 
 TEST:

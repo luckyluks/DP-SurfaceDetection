@@ -91,8 +91,13 @@ venv.bak/
 
 #images 
 .jpg
-Frames/
-trueFrames/
+*.jpg
+.png
+*.png
+
+#odgt files
+.odgt
+*.odgt
 
 # Spyder project settings
 .spyderproject

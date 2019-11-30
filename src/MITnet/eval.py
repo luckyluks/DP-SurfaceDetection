@@ -18,6 +18,8 @@ from MITnet.lib.utils import as_numpy
 from PIL import Image
 from tqdm import tqdm
 
+
+
 colors = loadmat('data/color150.mat')['colors']
 
 
@@ -26,9 +28,17 @@ def visualize_result(data, pred, dir_result):
 
     # segmentation
     seg_color = colorEncode(seg, colors)
+    seg_color = np.squeeze(seg_color,axis=2)
 
     # prediction
     pred_color = colorEncode(pred, colors)
+    pred_color = np.squeeze(pred_color,axis=2)
+
+    #convert img to gray
+    img = np.dot(img[..., :3], [0.299, 0.587, 0.114])
+    # img = img[:,:,np.newaxis]
+    img = np.round(img,0)
+    img = img.astype(np.uint8)
 
     # aggregate images and save
     im_vis = np.concatenate((img, seg_color, pred_color),
@@ -105,7 +115,8 @@ def evaluate(segmentation_module, loader, cfg, gpu):
 
 
 def main(cfg, gpu):
-    torch.cuda.set_device(gpu)
+
+    torch.cuda.set_device(gpu[0])
 
     # Network Builders
     net_encoder = ModelBuilder.build_encoder(
@@ -139,7 +150,7 @@ def main(cfg, gpu):
     segmentation_module.cuda()
 
     # Main loop
-    evaluate(segmentation_module, loader_val, cfg, gpu)
+    evaluate(segmentation_module, loader_val, cfg, gpu[0])
 
     print('Evaluation Done!')
 
