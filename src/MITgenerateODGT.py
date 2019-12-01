@@ -12,7 +12,7 @@ for subdir, dirs, files in os.walk('data/trueFrames'):
 trainSplit = np.int(np.round(0.7*nrOfFrames))
 
 #Randomize order
-order = np.random.permutation(nrOfFrames)
+order = np.random.permutation(nrOfFrames)+1
 
 #Generate ODGT files
 with open("data/training.odgt", "w") as train_file:

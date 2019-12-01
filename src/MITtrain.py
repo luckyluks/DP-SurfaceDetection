@@ -6,6 +6,9 @@ import os
 import MITnet.config
 import MITnet.train
 
+#easier cuda debug
+os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
+
 #load config
 cfg = MITnet.config.cfg
 #this model has good performance

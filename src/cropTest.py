@@ -79,3 +79,4 @@ for i in range(180):
     cv2.imwrite('testdata/out/frame'+str(i+1)+'.jpg', combinedImage)
 
 print('all done')
+

@@ -155,6 +155,7 @@ def main(cfg, gpus):
 
     crit = nn.NLLLoss(ignore_index=-1)
 
+
     if cfg.MODEL.arch_decoder.endswith('deepsup'):
         segmentation_module = SegmentationModule(
             net_encoder, net_decoder, crit, cfg.TRAIN.deep_sup_scale)
