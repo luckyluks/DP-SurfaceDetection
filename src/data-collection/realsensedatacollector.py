@@ -10,7 +10,7 @@ import shutil
 # use own libs
 from utils import *
 
-def record_runs(is_test_run=False, is_long_warmup_run=False, clip_length=30, warmup_length=5, fps=15, directory="recordings"):
+def record_runs(is_test_run=False, is_long_warmup_run=False, clip_length=30, warmup_length=5, fps=15, directory="recordings",file_name_prefix="", file_name_suffix=""):
 
     print("-"*110)
 
@@ -37,16 +37,12 @@ def record_runs(is_test_run=False, is_long_warmup_run=False, clip_length=30, war
     # Configure file settings
     total, used, free = get_disk_space()
     print("Disk space: Total/Used/Free: {}/{}/{} GiB".format(total, used, free) )
-    # clip_length = 30 # in seconds
-    # warmup_length = 5 # in seconds
-
     codec = cv2.VideoWriter_fourcc(*'mp4v')
-    # directory = "recordings"
 
 
     if not is_test_run:
-        file_path_rgb = os.path.join(directory,generate_save_date_name('.mp4', '{}s'.format(clip_length) ))
-        file_path_depth = os.path.join(directory,generate_save_date_name('.mp4', 'depth_{}s'.format(clip_length) ))
+        file_path_rgb = os.path.join(directory, generate_save_date_name_short('.mp4', file_name_prefix, file_name_suffix ))
+        file_path_depth = os.path.join(directory, generate_save_date_name_short('.mp4', file_name_prefix+"_depth", file_name_suffix ))
 
         out = cv2.VideoWriter(file_path_rgb, codec, framerate, (frame_width,frame_height))
         out_depth = cv2.VideoWriter(file_path_depth, codec, framerate, (frame_width,frame_height))
