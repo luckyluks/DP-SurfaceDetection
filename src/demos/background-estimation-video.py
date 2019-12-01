@@ -8,7 +8,7 @@ print(platform.system())
 if platform.system()=="Windows":
   print("windows os detected")
   # cap = cv2.VideoCapture("C:\\Users\\lukas\\workspace\\DP-SurfaceDetection\\example_data\\video.mp4")
-  cap = cv2.VideoCapture("C:\\Users\\lukas\\workspace\\DP-SurfaceDetection\\recordings\\object_detection_2.mp4")
+  cap = cv2.VideoCapture("C:\\Users\\lukas\\workspace\\DP-SurfaceDetection\\recordings\\old\\object_detection_2.mp4")
 elif platform.system()=="Linux":
   print("no windows os detected")
   cap = cv2.VideoCapture("/home/zed/workspace/DP-SurfaceDetection/example_data/video.mp4")
