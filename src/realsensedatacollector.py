@@ -32,7 +32,7 @@ def record_runs(is_test_run=False, is_long_warmup_run=False, clip_length=30, war
     if is_long_warmup_run:
         # reset to 100
         sensor_rgb.set_option(rs.option.exposure, 200.0)
-        sensor_rgb.set_option(rs.option.white_balance, 3500.0)
+        sensor_rgb.set_option(rs.option.white_balance, 1500.0)
 
     # Configure file settings
     total, used, free = get_disk_space()
@@ -52,25 +52,27 @@ def record_runs(is_test_run=False, is_long_warmup_run=False, clip_length=30, war
 
     # if is_long_warmup_run:
     print("Run warmup ({}s)...".format(warmup_length if is_long_warmup_run else 2))
-    while True:
-        sensor_rgb.set_option(rs.option.enable_auto_exposure, 1.0)
-        sensor_rgb.set_option(rs.option.enable_auto_white_balance, 1.0)
-        frames = pipeline.wait_for_frames()
 
-        cv2.namedWindow('warmup', cv2.WINDOW_AUTOSIZE)
-        color_image = np.asanyarray(frames.get_color_frame().get_data())
-        cv2.imshow('warmup', color_image)
-        cv2.waitKey(1)
+    if is_long_warmup_run:
+        while True:
+            sensor_rgb.set_option(rs.option.enable_auto_exposure, 1.0)
+            sensor_rgb.set_option(rs.option.enable_auto_white_balance, 1.0)
+            frames = pipeline.wait_for_frames()
 
-        e2 = cv2.getTickCount()
-        t = (e2 - e1) / cv2.getTickFrequency()
-        if not is_long_warmup_run:
-            if t > 2: # change it to record what length of video you are interested in
-                print("Done warmup!")
-                break
-        if t > warmup_length: # change it to record what length of video you are interested in
-                print("Done warmup!")
-                break
+            cv2.namedWindow('warmup', cv2.WINDOW_AUTOSIZE)
+            color_image = np.asanyarray(frames.get_color_frame().get_data())
+            cv2.imshow('warmup', color_image)
+            cv2.waitKey(1)
+
+            e2 = cv2.getTickCount()
+            t = (e2 - e1) / cv2.getTickFrequency()
+            if not is_long_warmup_run:
+                if t > 2: # change it to record what length of video you are interested in
+                    print("Done warmup!")
+                    break
+            if t > warmup_length: # change it to record what length of video you are interested in
+                    print("Done warmup!")
+                    break
     sensor_rgb.set_option(rs.option.enable_auto_exposure, 0.0)
     sensor_rgb.set_option(rs.option.enable_auto_white_balance, 0.0)
 

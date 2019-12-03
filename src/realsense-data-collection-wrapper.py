@@ -8,12 +8,12 @@ def main():
 
     # use setup section if not run through command line
     if (args.runs==None): 
-        args.runs = 1
-        args.clip = 10
+        args.runs = 10
+        args.clip = 30
         args.warmup = 10
         args.fps = 6
         args.directory = "recordings"
-        args.file_name_prefix = "E"      #add room here
+        args.file_name_prefix = "M"      #add room here
         args.file_name_suffix = "{}s-{}fps".format(args.clip, args.fps)
 
     # display setup
