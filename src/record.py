@@ -3,8 +3,6 @@ import cv2
 import Functions as func
 import os
 
-# @profile
-
 #decide color thresholds
 rThresh = 60
 gThresh = 60
@@ -73,9 +71,10 @@ for fold in folders:
             # Read frame
             ret, frame = cap.read()
 
-            if(totalCounter<614):
-                totalCounter+=1
-                continue
+            # if(totalCounter<670):
+            #     totalCounter+=1
+            #     frameCounter+=5
+            #     continue
 
             if(frameCounter-1) % 5 == 0:   #only for old videos recorded at 30 fps, remove otherwise
                 # Save frame
@@ -92,11 +91,14 @@ for fold in folders:
 
                 #FILTERING
                 dframe = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, rThresh, gThresh, bThresh)
-                gframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                # gframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 # Do 2 passes to create a filled in convex hull of all moving objects
                 hullframe, hull = func.CHI(dframe, 2, 50)
                 # Remove small artifacts created by the background subtraction
                 noArtframe = func.ArtFilt(hullframe, 300)
+                noArtframe = noArtframe.astype(np.uint8)
+
+                hullframe, hull = func.CHI(noArtframe, 2, 50)
 
                 filteredFrame = func.GrabCut(hull, frame, dframe)
 
