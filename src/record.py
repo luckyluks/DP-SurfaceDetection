@@ -3,6 +3,7 @@ import cv2
 import Functions as func
 import os
 
+# @profile
 
 #decide color thresholds
 rThresh = 60
@@ -21,7 +22,7 @@ for subdirs, dirs, files in os.walk(dataPath):
         info["bgPath"] = [subdirs+'/'+bg for bg in files if bg.startswith('bg')][0]
         info["videos"] = [subdirs+'/'+vid for vid in files if not vid.startswith('bg')]
         folders.append(info)
-nrOfTotal = nrOfTotal*180
+nrOfTotal = (nrOfTotal-len(folders))*180
 
 # Create output folders
 os.makedirs('data/Frames/', exist_ok=True)
@@ -71,6 +72,10 @@ for fold in folders:
 
             # Read frame
             ret, frame = cap.read()
+
+            if(totalCounter<614):
+                totalCounter+=1
+                continue
 
             if(frameCounter-1) % 5 == 0:   #only for old videos recorded at 30 fps, remove otherwise
                 # Save frame
