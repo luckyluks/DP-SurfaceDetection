@@ -19,12 +19,14 @@ for subdirs, dirs, files in os.walk(dataPath):
         info["name"] = subdirs
         info["bgPath"] = [subdirs+'/'+bg for bg in files if bg.startswith('bg')][0]
         info["videos"] = [subdirs+'/'+vid for vid in files if not vid.startswith('bg')]
+        info["new"] = len([True for ncheck in files if ncheck.startswith('new')])>0
         folders.append(info)
 nrOfTotal = (nrOfTotal-len(folders))*180
 
 # Create output folders
 os.makedirs('data/Frames/', exist_ok=True)
 os.makedirs('data/trueFrames/', exist_ok=True)
+os.makedirs('data/RGBdiff/', exist_ok=True)
 
 foldcount = 1
 totalCounter = 1
@@ -71,12 +73,9 @@ for fold in folders:
             # Read frame
             ret, frame = cap.read()
 
-            # if(totalCounter<670):
-            #     totalCounter+=1
-            #     frameCounter+=5
-            #     continue
 
-            if(frameCounter-1) % 5 == 0:   #only for old videos recorded at 30 fps, remove otherwise
+            if not fold.get('new') and ((frameCounter-1) % 5 == 0): #only for old videos recorded at 30 fps, remove otherwise
+
                 # Save frame
                 cv2.imwrite('data/Frames/frame' + str(totalCounter) + '.jpg', frame)
 
@@ -90,7 +89,7 @@ for fold in folders:
 
 
                 #FILTERING
-                dframe = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, rThresh, gThresh, bThresh)
+                dframe,_ = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, rThresh, gThresh, bThresh)
                 # gframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 # Do 2 passes to create a filled in convex hull of all moving objects
                 hullframe, hull = func.CHI(dframe, 2, 50)
@@ -103,9 +102,13 @@ for fold in folders:
                 filteredFrame = func.GrabCut(hull, frame, dframe)
 
                 # save truth (filtered frame)
-                U8frame = np.uint8(filteredFrame)
-                U8frame = cv2.cvtColor(U8frame, cv2.COLOR_GRAY2BGR)
+                U8frameg = np.uint8(filteredFrame)
+                U8frame = cv2.cvtColor(U8frameg, cv2.COLOR_GRAY2BGR)
                 cv2.imwrite('data/trueFrames/frame' + str(totalCounter) + '.jpg', U8frame)
+
+                # #save diff for each rgb channel
+                # cv2.imwrite('data/RGBdiff/frame' + str(totalCounter) + '.jpg', np.hstack((RGBdiffFrame,U8frameg)))
+
 
                 # print progress
                 os.system('clear')
@@ -113,6 +116,49 @@ for fold in folders:
 
                 #increase filename counter
                 totalCounter +=1
+            elif fold.get('new'):
+                # Save frame
+                cv2.imwrite('data/Frames/frame' + str(totalCounter) + '.jpg', frame)
+
+                # # Convert current frame to grayscale
+                # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                # # Calculate absolute difference of current frame and
+                # # the median frame
+                # rawdiff = cv2.absdiff(frame, grayMedianFrame)
+                # # Treshold to binarize
+                # th, binaryframe = cv2.threshold(rawdiff, 30, 255, cv2.THRESH_BINARY)
+
+                # FILTERING
+                dframe, RGBdiffFrame = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, rThresh, gThresh, bThresh)
+                # gframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                # Do 2 passes to create a filled in convex hull of all moving objects
+                hullframe, hull = func.CHI(dframe, 2, 50)
+                # Remove small artifacts created by the background subtraction
+                noArtframe = func.ArtFilt(hullframe, 300)
+                noArtframe = noArtframe.astype(np.uint8)
+
+                hullframe, hull = func.CHI(noArtframe, 2, 50)
+
+                filteredFrame = func.GrabCut(hull, frame, dframe)
+
+                # save truth (filtered frame)
+                U8frameg = np.uint8(filteredFrame)
+                U8frame = cv2.cvtColor(U8frameg, cv2.COLOR_GRAY2BGR)
+                cv2.imwrite('data/trueFrames/frame' + str(totalCounter) + '.jpg', U8frame)
+
+                # #save diff for each rgb channel
+                # cv2.imwrite('data/RGBdiff/frame' + str(totalCounter) + '.jpg', np.hstack((RGBdiffFrame,U8frameg)))
+
+                # print progress
+                os.system('clear')
+                print('folder {} of {} | file {} of {} | frame {} of {}'.format(foldcount, len(folders), vidcount,
+                                                                                len(fold.get('videos')), totalCounter,
+                                                                                nrOfTotal), flush=True)
+
+                # increase filename counter
+                totalCounter += 1
+            else:
+                nothing = []
 
 
 

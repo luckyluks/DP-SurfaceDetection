@@ -55,7 +55,8 @@ class BaseDataset(torch.utils.data.Dataset):
         # 0-255 to 0-1
         img = np.float32(np.array(img)) / 255.
         img = img.transpose((2, 0, 1))
-        img = self.normalize(torch.from_numpy(img.copy())) #edit
+        # img = self.normalize(torch.from_numpy(img.copy())) #edit
+        img = torch.from_numpy(img.copy())
         return img
 
     def segm_transform(self, segm):

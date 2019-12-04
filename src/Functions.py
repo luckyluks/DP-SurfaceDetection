@@ -148,7 +148,9 @@ def RGBConvexHull(frame, rMedian, gMedian, bMedian, rT, gT, bT):
 
     dframe[dframe > 0] = 255
 
-    return dframe
+    rgbDiffFrame = np.hstack((rDiffFrame,gDiffFrame,bDiffFrame))
+
+    return dframe, rgbDiffFrame
 
 def HullCombine(hull, minDist, dframe):
     c1 = -1

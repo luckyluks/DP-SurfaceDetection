@@ -4,7 +4,7 @@ DATASET:
   list_val: "./data/validation.odgt"
   num_class: 2
   imgSizes: (300, 375, 450, 525, 600)
-  imgMaxSize: 640
+  imgMaxSize: 180
   padding_constant: 8
   segm_downsampling_rate: 8
   random_flip: True
@@ -15,20 +15,20 @@ MODEL:
   fc_dim: 320
 
 TRAIN:
-  batch_size_per_gpu: 1
+  batch_size_per_gpu: 16
   num_epoch: 1
   start_epoch: 0
-  epoch_iters: 10000
+  epoch_iters: 2000
   optim: "SGD"
-  lr_encoder: 0.02
-  lr_decoder: 0.02
+  lr_encoder: 0.004
+  lr_decoder: 0.004
   lr_pow: 0.9
   beta1: 0.9
   weight_decay: 1e-4
-  deep_sup_scale: 0.4
-  fix_bn: False
+  deep_sup_scale: 0.1
+  fix_bn: True
   workers: 16
-  disp_iter: 20
+  disp_iter: 50
   seed: 304
   max_iters: 10000
 

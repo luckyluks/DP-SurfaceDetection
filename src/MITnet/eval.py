@@ -28,11 +28,12 @@ def visualize_result(data, pred, dir_result):
 
     # segmentation
     seg_color = colorEncode(seg, colors)
-    seg_color = np.squeeze(seg_color,axis=2)
+    seg_color = np.squeeze(seg_color,axis=2)      #edit
 
     # prediction
+
     pred_color = colorEncode(pred, colors)
-    pred_color = np.squeeze(pred_color,axis=2)
+    pred_color = np.squeeze(pred_color,axis=2)   #edit
 
     #convert img to gray
     img = np.dot(img[..., :3], [0.299, 0.587, 0.114])

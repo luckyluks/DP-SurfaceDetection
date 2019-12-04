@@ -109,6 +109,7 @@ def unique(ar, return_index=False, return_inverse=False, return_counts=False):
 
 
 def colorEncode(labelmap, colors):
+
     labelmap = labelmap.astype('int')
     # labelmap_rgb = np.zeros((labelmap.shape[0], labelmap.shape[1], 3),
     #                         dtype=np.uint8)
@@ -117,11 +118,13 @@ def colorEncode(labelmap, colors):
     for label in unique(labelmap):
         if label < 0:
             continue
+        # if label == 1:
+        #     labelmap_binary += (labelmap == label)*255*np.ones((labelmap.shape[0], labelmap.shape[1], 1), dtype=np.uint8)
         # labelmap_rgb += (labelmap == label)[:, :, np.newaxis] * \
         #     np.tile(colors[label],
         #             (labelmap.shape[0], labelmap.shape[1], 1))
         labelmap_binary += (labelmap == label)[:, :, np.newaxis] * \
-            np.tile(colors[label-1],
+            np.tile(colors[label],
                     (labelmap.shape[0], labelmap.shape[1], 1))
 
     # if mode == 'BGR':
