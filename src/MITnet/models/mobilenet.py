@@ -78,7 +78,7 @@ class InvertedResidual(nn.Module):
 
 
 class MobileNetV2(nn.Module):
-    def __init__(self, n_class=1000, input_size=224, width_mult=1.):
+    def __init__(self, n_class=2, input_size=224, width_mult=1.):
         super(MobileNetV2, self).__init__()
         block = InvertedResidual
         input_channel = 32
@@ -149,7 +149,7 @@ def mobilenetv2(pretrained=False, **kwargs):
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
     """
-    model = MobileNetV2(n_class=1000, **kwargs)
-    if pretrained:
-        model.load_state_dict(load_url(model_urls['mobilenetv2']), strict=False)
+    model = MobileNetV2(n_class=2, **kwargs)
+    # if pretrained:
+    #     model.load_state_dict(load_url(model_urls['mobilenetv2']), strict=False)
     return model

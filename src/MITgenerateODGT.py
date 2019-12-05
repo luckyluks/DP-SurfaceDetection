@@ -9,12 +9,11 @@ for subdir, dirs, files in os.walk('data/trueFrames'):
     nrOfFrames = len(files)
 
 #Define split train/validation
-trainSplit = np.int(np.round(0.7*nrOfFrames))
+trainSplit = np.int(np.round(0.99*nrOfFrames))
 
 #Randomize order
 # order = np.random.permutation(nrOfFrames)+1
 order = np.linspace(1,nrOfFrames,nrOfFrames, dtype=int)
-print(order)
 
 #Generate ODGT files
 with open("data/training.odgt", "w") as train_file:
