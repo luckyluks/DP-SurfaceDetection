@@ -133,6 +133,52 @@ def ChannelSplit(image):
 
     return r, g, b
 
+def GrabCutPixel(hullframe, img, dframe, sureFrame, surebgFrame):
+    # Create empty matrix for adding the different detected objects
+    template = np.zeros(np.shape(dframe))
+
+    # For every object detected in the hull, create a bounding box around that hull and preform GrabCut on it
+    # Then merge all these GrabCut results
+    mask = np.ones(img.shape[:2], np.uint8)*2
+    mask[surebgFrame==0] = 0
+    mask[hullframe==255] = 3
+    mask[sureFrame==255] = 1
+
+    bgdModel = np.zeros((1, 65), np.float64)
+    fgdModel = np.zeros((1, 65), np.float64)
+    cv2.grabCut(img, mask, None, bgdModel, fgdModel, 5, cv2.GC_INIT_WITH_MASK)
+    mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
+    frame = img * mask2[:, :, np.newaxis]
+    grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    th, dframe = cv2.threshold(grayFrame, 1, 255, cv2.THRESH_BINARY)
+
+    template = np.add(template, dframe)
+
+    return template
+
+def intersectionOverUnion(imPred, imLabel):
+    imPred = np.asarray(imPred).copy()
+    imLabel = np.asarray(imLabel).copy()
+
+    #go from 0/1 to 1/2 (depending on what are known as unlabeled)
+    imPred += 1
+    imLabel += 1
+    # Remove classes from unlabeled pixels in gt image.
+    # We should not penalize detections in unlabeled portions of the image.
+    imPred = imPred * (imLabel > 0)
+
+    # Compute area intersection:
+    intersection = imPred * (imPred == imLabel)
+    (area_intersection, _) = np.histogram(
+        intersection, bins=2, range=(1, 2))
+
+    # Compute area union:
+    (area_pred, _) = np.histogram(imPred, bins=2, range=(1, 2))
+    (area_lab, _) = np.histogram(imLabel, bins=2, range=(1, 2))
+    area_union = area_pred + area_lab - area_intersection
+
+    return area_intersection/area_union
+
 def RGBConvexHull(frame, rMedian, gMedian, bMedian, rT, gT, bT):
 
     rFrame, gFrame, bFrame = ChannelSplit(frame)

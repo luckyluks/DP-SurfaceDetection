@@ -90,16 +90,21 @@ for fold in folders:
 
                 #FILTERING
                 dframe,_ = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, rThresh, gThresh, bThresh)
+                sureFrame = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, 100, 100, 100)
+                surebgFrame = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, 30, 30, 30)
                 # gframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+
                 # Do 2 passes to create a filled in convex hull of all moving objects
                 hullframe, hull = func.CHI(dframe, 2, 50)
                 # Remove small artifacts created by the background subtraction
-                noArtframe = func.ArtFilt(hullframe, 300)
+                noArtframe = func.ArtFilt(hullframe, 100)
+
+
                 noArtframe = noArtframe.astype(np.uint8)
-
                 hullframe, hull = func.CHI(noArtframe, 2, 50)
+                filteredFrame = func.GrabCutPixel(hullframe, frame, dframe, sureFrame, surebgFrame)
 
-                filteredFrame = func.GrabCut(hull, frame, dframe)
 
                 # save truth (filtered frame)
                 U8frameg = np.uint8(filteredFrame)

@@ -25,8 +25,8 @@ from keras.optimizers import Adam
 from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 
 
-im_width = 128
-im_height = 128
+im_width = 320
+im_height = im_width
 border = 5
 
 #create network output folder
@@ -45,11 +45,11 @@ def get_data(path, train=True):
         # Load images
         img = load_img(path + '/Frames/' + id_, grayscale=True)
         x_img = img_to_array(img)
-        x_img = resize(x_img, (128, 128, 1), mode='constant', preserve_range=True)
+        x_img = resize(x_img, (im_height, im_width, 1), mode='constant', preserve_range=True)  #EDIT
 
         # Load masks
         mask = img_to_array(load_img(path + '/trueFrames/' + id_, grayscale=True))
-        mask = resize(mask, (128, 128, 1), mode='constant', preserve_range=True)
+        mask = resize(mask, (im_height, im_width, 1), mode='constant', preserve_range=True)
 
         # Save images
         X[n, ..., 0] = x_img.squeeze() / 255
