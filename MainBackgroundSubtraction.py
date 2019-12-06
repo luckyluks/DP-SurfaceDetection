@@ -4,7 +4,7 @@ from skimage import data, filters
 import Functions as func
 
 # Open Video
-cap = cv2.VideoCapture("6.mp4")
+cap = cv2.VideoCapture("4.mp4")
 bg = cv2.VideoCapture('Background.mp4')
 
 # Method select: CH (Convex Hull), GC (GrabCut), rgbGC (Color GrabCut)
@@ -41,6 +41,8 @@ while True:
         gframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         if selection == 'rgbGC':
           dframe = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, 60, 60, 80)
+          sureFrame = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, 100, 100, 100)
+          surebgFrame = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, 30, 30, 30)
         else:
           # Calculate absolute difference of current frame and
           # the median frame
@@ -55,7 +57,9 @@ while True:
         noArtframe = func.ArtFilt(hullframe, 100)
 
         if selection == 'GC' or selection == 'rgbGC':
-            GrabCutFrame = func.GrabCut(hull, frame, dframe)
+            noArtframe = noArtframe.astype(np.uint8)
+            hullframe, hull = func.CHI(noArtframe, 2, 50)
+            GrabCutFrame = func.GrabCutPixel(hullframe, frame, dframe, sureFrame, surebgFrame)
 
             col1 = np.hstack((np.true_divide(gframe,255), dframe))
             col2 = np.hstack((hullframe, GrabCutFrame))

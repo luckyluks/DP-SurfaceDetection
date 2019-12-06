@@ -122,6 +122,29 @@ def GrabCut(hull, img, dframe):
 
     return template
 
+def GrabCutPixel(hullframe, img, dframe, sureFrame, surebgFrame):
+    # Create empty matrix for adding the different detected objects
+    template = np.zeros(np.shape(dframe))
+
+    # For every object detected in the hull, create a bounding box around that hull and preform GrabCut on it
+    # Then merge all these GrabCut results
+    mask = np.ones(img.shape[:2], np.uint8)*2
+    mask[surebgFrame==0] = 0
+    mask[hullframe==255] = 3
+    mask[sureFrame==255] = 1
+
+    bgdModel = np.zeros((1, 65), np.float64)
+    fgdModel = np.zeros((1, 65), np.float64)
+    cv2.grabCut(img, mask, None, bgdModel, fgdModel, 5, cv2.GC_INIT_WITH_MASK)
+    mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
+    frame = img * mask2[:, :, np.newaxis]
+    grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    th, dframe = cv2.threshold(grayFrame, 1, 255, cv2.THRESH_BINARY)
+
+    template = np.add(template, dframe)
+
+    return template
+
 def ChannelSplit(image):
     i = image.copy()
     # Separate the 3 color channels
