@@ -55,12 +55,9 @@ def get_data(path, train=True):
         X[n, ..., 0] = x_img.squeeze() / 255
         y[n] = mask / 255
     print('Done!')
-    return X, y, ids
+    return X, y
 
-def getIdOrder
-
-
-X, y, ids= get_data(path_train, train=False)
+X, y = get_data(path_train, train=False)
 
 # Split train and valid
 X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.3, random_state=2018)
@@ -158,11 +155,6 @@ def save_samples(X, y, preds, binary_preds):
 
     for ix in range(len(preds)):
 
-        if(ix % 500 == 0):
-            print(ix)
-
-        xrange = ix+(len(X)-len(preds))-1
-
         originalImage = X[ix, ..., 0]
 
         groundTruth = y[ix].squeeze()
@@ -183,4 +175,4 @@ def save_samples(X, y, preds, binary_preds):
 
 
 #Save images
-save_samples(X,y,preds_val,preds_val_t)
+save_samples(X_valid,y_valid,preds_val,preds_val_t)
