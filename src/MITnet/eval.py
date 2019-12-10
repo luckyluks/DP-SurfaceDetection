@@ -37,7 +37,7 @@ def visualize_result(data, pred, dir_result):
 
     #convert img to gray
     img = np.dot(img[..., :3], [0.299, 0.587, 0.114])
-    # img = img[:,:,np.newaxis]
+
     img = np.round(img,0)
     img = img.astype(np.uint8)
 

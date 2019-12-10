@@ -164,10 +164,6 @@ for imn in range(500):
 
     binaryPred = (prediction > 0.5).astype(np.uint8)
 
-# originalImage = X[ix, ..., 0]
-        #
-        # groundTruth = y[ix].squeeze()
-
     prediction = prediction.squeeze()
 
     binaryPred = binaryPred.squeeze()

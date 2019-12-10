@@ -121,6 +121,7 @@ for imn in range(500):
 
     groundtruth = groundtruth[:,:,0]
     groundtruth = (groundtruth/255).astype(np.uint8)
+
     iousum += func.intersectionOverUnion(prediction,groundtruth)
 
 print('total IoU = {}'.format(iousum/500))

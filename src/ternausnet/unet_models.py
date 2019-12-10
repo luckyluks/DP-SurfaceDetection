@@ -3,6 +3,7 @@ from torch.nn import functional as F
 import torch
 from torchvision import models
 import torchvision
+import collections
 
 
 def conv3x3(in_, out):
@@ -27,7 +28,7 @@ class DecoderBlock(nn.Module):
 
         self.block = nn.Sequential(
             ConvRelu(in_channels, middle_channels),
-            nn.ConvTranspose2d(middle_channels, out_channels, kernel_size=3, stride=2, padding=1, output_padding=1),
+            nn.ConvTranspose2d(middle_channels, out_channels, kernel_size=4, stride=2, padding=1, output_padding=0),
             nn.ReLU(inplace=True)
         )
 
@@ -99,7 +100,49 @@ def unet11(pretrained=False, **kwargs):
     model = UNet11(pretrained=pretrained, **kwargs)
 
     if pretrained == 'carvana':
-        state = torch.load('ternausnet/TernausNet.pt')
+        # state = torch.load('ternausnet/TernausNet.pt')
+        state = torch.load('data/UnetPTchks/model_0.pt')
+
+        mo = state['model']
+        new_keys = []
+        old_keys = []
+        for key in mo:
+            old_keys.append(key)
+            rmSt = key[7:]
+            finalkey = rmSt
+            if (not rmSt.find('conv1.0')):
+                finalkey = str(rmSt).replace('1.0', '1')
+            if (not rmSt.find('conv2.0')):
+                finalkey = rmSt.replace('2.0', '2')
+            if (not rmSt.find('conv3.2')):
+                finalkey = rmSt.replace('3.2', '3')
+            if (not rmSt.find('conv4.2')):
+                finalkey = rmSt.replace('4.2', '4')
+            if (not rmSt.find('conv5.2')):
+                finalkey = rmSt.replace('5.2', '5')
+
+            if not (rmSt.find('conv3.0') and rmSt.find('conv4.0') and rmSt.find('conv5.0')):
+                finalkey = rmSt.replace('.0', 's')
+
+
+            # bl1 = rmSt.find('center.block.0.conv.weight') and rmSt.find('dec5.block.0.conv.weight')
+            # bl2 = rmSt.find('dec4.block.0.conv.weight') and rmSt.find('dec3.block.0.conv.weight')
+            # if not (bl1 and bl2 and rmSt.find('dec2.block.0.conv.weight')):
+            #     finalkey = rmSt.replace('0.conv','1')
+            #
+            # bl3 = rmSt.find('center.block.1.weight') and rmSt.find('dec5.block.1.weight')
+            # bl4 = rmSt.find('dec4.block.1.weight') and rmSt.find('dec3.block.1.weight')
+            # if not (bl3 and bl4 and rmSt.find('dec2.block.1.weight')):
+            #     finalkey = rmSt.replace('1','0.conv')
+
+
+
+
+
+            new_keys.append(finalkey)
+
+        mo2 = collections.OrderedDict((new_keys[n] if k == old_keys[n] else k, v) for n, (k, v) in enumerate(mo.items()))
+        state['model'] = mo2
         model.load_state_dict(state['model'])
     return model
 

@@ -4,8 +4,8 @@ import Functions as func
 import os
 
 outpf = 'data/combtwo'
-inleft = 'data/outputUnetTF'
-inright = 'data/outputUnetPT'
+inleft = 'data/trueFrames'
+inright = 'data/trueFramesNEW'
 
 # Create output folders
 os.makedirs(outpf, exist_ok=True)
