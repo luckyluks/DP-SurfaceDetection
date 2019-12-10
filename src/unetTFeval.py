@@ -3,6 +3,7 @@ import random
 import pandas as pd
 import numpy as np
 import cv2
+import Functions as func
 
 
 from tqdm import tqdm_notebook, tnrange
@@ -25,8 +26,8 @@ from keras.optimizers import Adam
 from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 
 
-im_width = 320
-im_height = im_width
+im_width = 640
+im_height = 480
 border = 5
 
 #create network output folder
@@ -36,31 +37,36 @@ os.makedirs('data/outputUnetTF', exist_ok=True)
 path_train =  r'data'
 
 
+np.random.seed(1337)
+order = np.random.randint(1,7564,size=500)
+
+
 def get_data(path, train=True):
-    ids = next(os.walk(path + "/Frames"))[2]
-    X = np.zeros((len(ids), im_height, im_width, 1), dtype=np.float32)
-    y = np.zeros((len(ids), im_height, im_width, 1), dtype=np.float32)
+    # ids = next(os.walk(path + "/Frames"))[2]
+
+    X = np.zeros((len(order), im_height, im_width, 1), dtype=np.float32)
+    y = np.zeros((len(order), im_height, im_width, 1), dtype=np.float32)
     print('Getting and resizing images ... ')
-    for n, id_ in enumerate(ids):
+    for n, id_ in enumerate(order):
         # Load images
-        img = load_img(path + '/Frames/' + id_, grayscale=True)
+        img = load_img(path + '/Frames/frame' + str(id_) + '.jpg', grayscale=True)
         x_img = img_to_array(img)
         x_img = resize(x_img, (im_height, im_width, 1), mode='constant', preserve_range=True)  #EDIT
 
         # Load masks
-        mask = img_to_array(load_img(path + '/trueFrames/' + id_, grayscale=True))
+        mask = img_to_array(load_img(path + '/trueFrames/frame' + str(id_) + '.jpg', grayscale=True))
         mask = resize(mask, (im_height, im_width, 1), mode='constant', preserve_range=True)
 
         # Save images
         X[n, ..., 0] = x_img.squeeze() / 255
         y[n] = mask / 255
     print('Done!')
-    return X, y
+    return X,y
 
-X, y = get_data(path_train, train=False)
+X_valid, y_valid  = get_data(path_train, train=False)
 
 # Split train and valid
-X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.3, random_state=2018)
+# X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.3, random_state=2018)
 
 def conv2d_block(input_tensor, n_filters, kernel_size=3, batchnorm=True):
     # first layer
@@ -133,7 +139,7 @@ model.summary()
 
 #%%
 # Load best model
-model.load_weights('model-tgs-salt.h5')
+model.load_weights('model-unet.h5')
 print('weights loaded')
 #%%
 # Evaluate on validation set (this must be equals to the best log_loss)
@@ -141,38 +147,41 @@ print('weights loaded')
 
 #%%
 print('predicting')
-# Predict on train, val and test
-# preds_train = model.predict(X_train, verbose=1)
-preds_val = model.predict(X_valid, verbose=1)
 
-# Threshold predictions
-# preds_train_t = (preds_train > 0.5).astype(np.uint8)
-preds_val_t = (preds_val > 0.5).astype(np.uint8)
+iousum = 0
+for imn in range(500):
 
-#%%
+    print(imn)
 
-def save_samples(X, y, preds, binary_preds):
+    index = order[imn]
 
-    for ix in range(len(preds)):
+    groundTruth = y_valid[imn]
+    groundTruth = groundTruth.squeeze()
 
-        originalImage = X[ix, ..., 0]
+    input = X_valid[imn]
+    input = input[np.newaxis, :, :, :]
+    prediction = model.predict(input, verbose=1)
 
-        groundTruth = y[ix].squeeze()
+    binaryPred = (prediction > 0.5).astype(np.uint8)
 
-        prediction = preds[ix].squeeze()
+# originalImage = X[ix, ..., 0]
+        #
+        # groundTruth = y[ix].squeeze()
 
-        binaryPred = binary_preds[ix].squeeze()
+    prediction = prediction.squeeze()
 
-        c1 = np.hstack((originalImage,groundTruth))
-        c2 = np.hstack((binaryPred,prediction))
-        comb = np.vstack((c1,c2))
-        comb = np.round(comb*255)
-        comb = comb.astype(np.uint8)
+    binaryPred = binaryPred.squeeze()
 
+    # c1 = np.hstack((originalImage,groundTruth))
+    c2 = np.hstack((prediction,binaryPred))
+    # comb = np.vstack((c1,c2))
+    comb = np.round(c2*255)
+    comb = comb.astype(np.uint8)
 
-        cv2.imwrite('data/outputUnetTF/frame'+str(ix+1)+'.jpg',comb)
+    cv2.imwrite('data/outputUnetTF/frame'+str(index)+'.jpg',comb)
 
+    groundTruth = groundTruth.astype(np.uint8)
+    iousum += func.intersectionOverUnion(binaryPred, groundTruth)
 
+print('total IoU = {}'.format(iousum/500))
 
-#Save images
-save_samples(X_valid,y_valid,preds_val,preds_val_t)

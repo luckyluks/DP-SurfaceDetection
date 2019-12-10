@@ -9,7 +9,7 @@ for subdir, dirs, files in os.walk('data/trueFrames'):
     nrOfFrames = len(files)
 
 #Define split train/validation
-trainSplit = np.int(np.round(0.99*nrOfFrames))
+trainSplit = np.int(np.round(0.7*nrOfFrames))
 
 #Randomize order
 # order = np.random.permutation(nrOfFrames)+1

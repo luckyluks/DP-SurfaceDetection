@@ -1,0 +1,16 @@
+{
+ "batch_size": 16,
+ "device_ids": "0",
+ "fold": 0,
+ "jaccard_weight": 0.3,
+ "lr": 1e-05,
+ "model": "UNet11",
+ "n_epochs": 1,
+ "root": "data",
+ "train_crop_height": 480,
+ "train_crop_width": 640,
+ "type": "binary",
+ "val_crop_height": 480,
+ "val_crop_width": 640,
+ "workers": 8
+}

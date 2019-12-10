@@ -63,7 +63,7 @@ class BaseDataset(torch.utils.data.Dataset):
         # to tensor, 1 or 2(fg)
         te = np.array(segm)
         te = np.float32(te)
-        # te = te + 1
+        # te = te - 1
 
         segm = torch.from_numpy(te)#   #EDIT
 

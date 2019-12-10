@@ -76,7 +76,7 @@ X, y = get_data(path_train, train=True)
 #%%
 
 # Split train and valid
-X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.15, random_state=2018)
+X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.3, random_state=2018)
 
 #%%
 # Check if training data looks all right

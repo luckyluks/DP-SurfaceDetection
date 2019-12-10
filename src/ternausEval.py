@@ -1,5 +1,5 @@
 import cv2
-from pylab import *
+# from pylab import *
 import torch
 import numpy as np
 from torch import nn
@@ -7,13 +7,17 @@ from ternausnet.unet_models import unet11
 from pathlib import Path
 from torch.nn import functional as F
 from torchvision.transforms import ToTensor, Normalize, Compose
+import os
+import Functions as func
 
+#create network output folder
+os.makedirs('data/outputUnetPT', exist_ok=True)
 
 #pretrained true or 'carvana'
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def get_model():
-    model = unet11(pretrained='carvana')
+    model = unet11(pretrained='carvana')   #or 'carvana'
     model.eval()
     return model.to(device)
 
@@ -87,15 +91,36 @@ def crop_image(img, pads):
 
 model = get_model()
 
-img, pads = load_image('data/Frames/frame1.jpg', pad=True)
+np.random.seed(1337)
+order = np.random.randint(1, 7564,size=500)
 
-with torch.no_grad():
-    input_img = torch.unsqueeze(img_transform(img).to(device), dim=0)
-    mask = F.sigmoid(model(input_img))
+iousum = 0
+for imn in range(500):
 
-mask_array = mask.data[0].cpu().numpy()[0]
-mask_array = crop_image(mask_array, pads)
+    if(imn % 50 == 0):
+        print(imn)
 
-cv2.imshow('prediction', mask_array)
-cv2.imshow('pred overlay', mask_overlay(crop_image(img, pads), (mask_array > 0.5).astype(np.uint8)))
-cv2.waitKey(0)
+    index = order[imn]
+    img, pads = load_image('data/Frames/frame'+str(index)+'.jpg', pad=True)
+    groundtruth, pads = load_image('data/trueFrames/frame'+str(index)+'.jpg', pad=True)
+
+    with torch.no_grad():
+        input_img = torch.unsqueeze(img_transform(img).to(device), dim=0)
+        mask = torch.sigmoid(model(input_img))
+
+    mask_array = mask.data[0].cpu().numpy()[0]
+    mask_array = crop_image(mask_array, pads)
+    prediction = (mask_array > 0.5).astype(np.uint8)
+
+    c2 = np.hstack((mask_array, prediction))
+    comb = np.round(c2 * 255)
+    comb = comb.astype(np.uint8)
+
+
+    cv2.imwrite('data/outputUnetPT/frame'+str(index)+'.jpg', comb)
+
+    groundtruth = groundtruth[:,:,0]
+    groundtruth = (groundtruth/255).astype(np.uint8)
+    iousum += func.intersectionOverUnion(prediction,groundtruth)
+
+print('total IoU = {}'.format(iousum/500))

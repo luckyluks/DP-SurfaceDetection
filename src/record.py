@@ -6,7 +6,7 @@ import os
 #decide color thresholds
 rThresh = 60
 gThresh = 60
-bThresh = 80
+bThresh = 60
 
 #declare input data path
 dataPath = 'venv/include/'
@@ -89,7 +89,7 @@ for fold in folders:
 
 
                 #FILTERING
-                dframe,_ = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, rThresh, gThresh, bThresh)
+                dframe = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, rThresh, gThresh, bThresh)
                 sureFrame = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, 100, 100, 100)
                 surebgFrame = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, 30, 30, 30)
                 # gframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -117,7 +117,7 @@ for fold in folders:
 
                 # print progress
                 os.system('clear')
-                print('folder {} of {} | file {} of {} | frame {} of {}'.format(foldcount,len(folders),vidcount,len(fold.get('videos')),totalCounter,nrOfTotal),flush=True)
+                print('folder {} of {} | file {} of {} | frame {} of {} filename: {} | frame {}'.format(foldcount,len(folders),vidcount,len(fold.get('videos')),totalCounter,nrOfTotal,videoPath,frameCounter),flush=True)
 
                 #increase filename counter
                 totalCounter +=1
@@ -134,17 +134,19 @@ for fold in folders:
                 # th, binaryframe = cv2.threshold(rawdiff, 30, 255, cv2.THRESH_BINARY)
 
                 # FILTERING
-                dframe, RGBdiffFrame = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, rThresh, gThresh, bThresh)
+                dframe = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, rThresh, gThresh, bThresh)
+                sureFrame = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, 100, 100, 100)
+                surebgFrame = func.RGBConvexHull(frame, rMedian, gMedian, bMedian, 30, 30, 30)
                 # gframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
                 # Do 2 passes to create a filled in convex hull of all moving objects
                 hullframe, hull = func.CHI(dframe, 2, 50)
                 # Remove small artifacts created by the background subtraction
-                noArtframe = func.ArtFilt(hullframe, 300)
+                noArtframe = func.ArtFilt(hullframe, 100)
+
                 noArtframe = noArtframe.astype(np.uint8)
-
                 hullframe, hull = func.CHI(noArtframe, 2, 50)
-
-                filteredFrame = func.GrabCut(hull, frame, dframe)
+                filteredFrame = func.GrabCutPixel(hullframe, frame, dframe, sureFrame, surebgFrame)
 
                 # save truth (filtered frame)
                 U8frameg = np.uint8(filteredFrame)
@@ -156,9 +158,10 @@ for fold in folders:
 
                 # print progress
                 os.system('clear')
-                print('folder {} of {} | file {} of {} | frame {} of {}'.format(foldcount, len(folders), vidcount,
-                                                                                len(fold.get('videos')), totalCounter,
-                                                                                nrOfTotal), flush=True)
+                print('folder {} of {} | file {} of {} | frame {} of {} filename: {} | frame {}'.format(foldcount, len(folders),
+                                                                                                        vidcount, len(fold.get('videos')),
+                                                                                                        totalCounter, nrOfTotal, videoPath, frameCounter), flush=True)
+
 
                 # increase filename counter
                 totalCounter += 1

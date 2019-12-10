@@ -3,15 +3,24 @@ import cv2
 import Functions as func
 import os
 
+outpf = 'data/combtwo'
+inleft = 'data/outputUnetTF'
+inright = 'data/outputUnetPT'
 
 # Create output folders
-os.makedirs('data/combOut', exist_ok=True)
+os.makedirs(outpf, exist_ok=True)
 
-for i in range(7564):
-    real = cv2.imread('data/Frames/frame'+str(i+1)+'.jpg')
-    true = cv2.imread('data/trueFrames/frame'+str(i+1)+'.jpg')
 
-    comb = np.hstack((real,true))
-    cv2.imwrite('data/combOut/frame'+str(i+1)+'.jpg',comb)
+np.random.seed(1337)
+order = np.random.randint(1,7564,size=500)
+
+for i in range(500):
+    index = order[i]
+    real = cv2.imread(inleft+'/frame'+str(index)+'.jpg')
+    true = cv2.imread(inright+'/frame'+str(index)+'.jpg')
+
+    comb = np.vstack((real,true))
+
+    cv2.imwrite(outpf+'/frame'+str(index)+'.jpg', comb)
 
 
