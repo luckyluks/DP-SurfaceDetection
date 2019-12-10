@@ -1,6 +1,11 @@
 # ignore vscode files
 .vscode/
 
+# ignore data folder
+
+data/
+**/model/model_*
+
 pretrained_models/
 
 # Byte-compiled / optimized / DLL files

@@ -40,6 +40,7 @@ import torch.nn.functional as F
 from dataset import *
 from networks import *
 from CrossEntropy2d import *
+import functions as func
 
 
 
@@ -66,23 +67,31 @@ path_test = "/media/zed/Data/gtdata/data/trueFrames"
 
 # print(dataset_loader.dataset.shape)
 
+
+# setup
+num_epochs = 2
+num_epochs_eval = 1
+batch_size = 8
+batch_size_eval = 2
+learning_rate = 0.001
+model_id = "3"
+
 image_paths = os.listdir(path_train)
 target_paths = os.listdir(path_test)
 
 image_paths = [os.path.join(path_train, image_item) for image_item in image_paths]
-target_paths = [os.path.join(path_test, target_item) for target_item in target_paths]
 
-# image_paths = ['./data/0.png', './data/1.png']
-# target_paths = ['./target/0.png', './target/1.png']
+target_paths = [os.path.join(path_test, target_item) for target_item in target_paths]
 dataset = MyDataset(image_paths, target_paths)
 
-n_samples = len(dataset)
-n_train_samples = int(n_samples*0.7)
-n_val_samples = n_samples - n_train_samples
-train_dataset, val_dataset = random_split(dataset, [n_train_samples, n_val_samples])
-train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=n_val_samples)
+# n_samples = len(dataset)
+# n_train_samples = int(n_samples*0.7)
+# n_val_samples = n_samples - n_train_samples
+# train_dataset, val_dataset = random_split(dataset, [n_train_samples, n_val_samples])
+# train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+# val_loader = DataLoader(val_dataset, batch_size=batch_size_eval)
 
+train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("using device: ", device)
@@ -90,7 +99,7 @@ print("using device: ", device)
 
 
 print("train_data_loader:", len(train_loader.dataset))
-print("val_data_loader:", len(val_loader.dataset))
+# print("val_data_loader:", len(val_loader.dataset))
 # import matplotlib.pyplot as plt
 print("done")
 
@@ -102,17 +111,24 @@ print("done")
 #     break
 
 
-# setup
-num_epochs = 4
-batch_size = 4
-learning_rate = 0.001
-model_id = "1"
-
 # network
-network =  U_Net(img_ch=3,output_ch=3)
+model_dir = os.path.join(os.getcwd(),"neuralnetwork","model")
+network =  U_Net(img_ch=3,output_ch=2)
+model_dir_files = os.listdir(model_dir)
+previous_model_checkpoints = [ string for string in model_dir_files if "model_"+model_id in string]
+# continue learning if model-id already used
+epoch_offset = 0
+if len(previous_model_checkpoints) > 0:
+    epoch_numbers = [int(filename.split("_")[-1].split(".")[0]) for filename in previous_model_checkpoints]
+    model_dir = os.path.join(os.getcwd(),"neuralnetwork","model")
+    model_file_name = "model_" + str(model_id) + "_epoch_" + str(max(epoch_numbers)) + ".pth"
+    state = torch.load(os.path.join(model_dir, model_file_name))
+    network.load_state_dict(state)
+    epoch_offset = max(epoch_numbers)
+    print("loaded previous checkpoint: ", model_file_name)
+
 network.to(device)
 
-model_dir = os.path.join(os.getcwd(),"neuralnetwork","model")
 
 # loss function
 loss_fn = nn.CrossEntropyLoss()
@@ -126,7 +142,7 @@ for epoch in range(num_epochs):
     print ("###########################")
     print ("######## NEW EPOCH ########")
     print ("###########################")
-    print ("epoch: %d/%d" % (epoch+1, num_epochs))
+    print ("epoch: %d/%d (offset: %d)" % (epoch+1, num_epochs, epoch_offset))
 
     ############################################################################
     # train:
@@ -137,15 +153,26 @@ for epoch in range(num_epochs):
         #current_time = time.time()
 
         imgs = Variable(imgs).to(device) # (shape: (batch_size, 3, img_h, img_w))
+        label_imgs = label_imgs.squeeze(1)
         label_imgs = Variable(label_imgs.type(torch.LongTensor)).to(device) # (shape: (batch_size, img_h, img_w))
 
         outputs = network(imgs) # (shape: (batch_size, num_classes, img_h, img_w))
 
+        # print("img: \t", imgs.shape)
+        # print("tar: \t", label_imgs.shape)
+        # print("out: \t", outputs.shape)
 
-        outputs = outputs.squeeze(0)
-        label_imgs = label_imgs.squeeze(0)
+        # # test = label_imgs[0].cpu().detach().numpy()
+        # # np.unique(test)
+        # # plt.imshow(, cv2.imwrite("test.png", test.transpose(1,2,0)*255))
 
-        label_imgs=label_imgs.argmax(1)
+        # # outputs = outputs.squeeze(1)
+
+        # print("img: \t", imgs.shape)
+        # print("tar: \t", label_imgs.shape)
+        # print("out: \t", outputs.shape)
+
+        # label_imgs=label_imgs.argmax(1)
 
         # print(outputs.shape)
         # print(label_imgs.shape)
@@ -160,7 +187,29 @@ for epoch in range(num_epochs):
         loss.backward() # (compute gradients)
         optimizer.step() # (perform optimization step)
 
-        #print (time.time() - current_time)
+        # #print (time.time() - current_time)
+        # for step, (imgs, label_imgs) in enumerate(val_loader):
+        #     with torch.no_grad(): # (corresponds to setting volatile=True in all variables, this is done during inference to reduce memory consumption)
+        #         imgs = Variable(imgs).to(device) # (shape: (batch_size, 3, img_h, img_w))
+        #         label_imgs = Variable(label_imgs.type(torch.LongTensor)).to(device) # (shape: (batch_size, img_h, img_w))
+
+        #         outputs = network(imgs) # (shape: (batch_size, num_classes, img_h, img_w))
+
+        #         # compute the loss:
+        #         # loss = loss_fn(outputs, label_imgs)
+        #         # loss_value = loss.data.cpu().numpy()
+        #         # batch_losses.append(loss_value)
+
+        #         # f, axarr = plt.subplots(imgs.shape[0],3)
+
+        #         # for idx in range(imgs.shape[0]):
+        #         #     image = imgs[idx].cpu().detach().numpy().transpose((1,2,0))
+        #         #     target = label_imgs[idx].cpu().detach().numpy().transpose((1,2,0))
+        #         #     output = outputs[idx].cpu().detach().numpy().transpose((1,2,0))
+        #         #     axarr[idx,0].imshow(image)
+        #         #     axarr[idx,1].imshow(target)
+        #         #     axarr[idx,2].imshow(output)
+        #         # plt.show()
 
     epoch_loss = np.mean(batch_losses)
     epoch_losses_train.append(epoch_loss)
@@ -209,25 +258,36 @@ for epoch in range(num_epochs):
     # plt.savefig("%s/epoch_losses_val.png" % model_dir)
     # plt.close(1)
 
-    # # save the model weights to disk:
-    # checkpoint_path = model_dir + "/model_" + model_id +"_epoch_" + str(epoch+1) + ".pth"
-    # torch.save(network.state_dict(), checkpoint_path)
+    # save the model weights to disk:
+    checkpoint_path = model_dir + "/model_" + model_id +"_epoch_" + str(epoch_offset+epoch+1) + ".pth"
+    torch.save(network.state_dict(), checkpoint_path)
 
-# Qualitative Analysis
-dataiter = iter(val_loader)
-images, labels = dataiter.next()
-if device=="cuda":
-    images = images.to(device)
-inputs = images.to(device)
-with torch.no_grad():
-    outputs = network(inputs)
-label = outputs[0].max(0)[1].byte().cpu().data
-label_color = Colorize()(label.unsqueeze(0))
-label_save = ToPILImage()(label_color)
-plt.figure()
-plt.imshow(ToPILImage()(images[0].cpu()))
-plt.figure()
-plt.imshow(label_save)
+
+# iou_sum = 0
+# num_steps = 0
+# for step, (imgs, label_imgs) in enumerate(val_loader):
+#         with torch.no_grad(): # (corresponds to setting volatile=True in all variables, this is done during inference to reduce memory consumption)
+#             imgs = Variable(imgs).to(device) # (shape: (batch_size, 3, img_h, img_w))
+#             label_imgs = label_imgs.squeeze(1)
+#             label_imgs = Variable(label_imgs.type(torch.LongTensor)).to(device) # (shape: (batch_size, img_h, img_w))
+#             outputs = network(imgs) # (shape: (batch_size, num_classes, img_h, img_w))
+
+
+#             f, axarr = plt.subplots(imgs.shape[0],3)
+
+#             for idx in range(imgs.shape[0]):
+#                 image = imgs[idx].detach().numpy().transpose((1,2,0))
+#                 target = label_imgs[idx].detach().numpy().transpose((1,2,0))
+#                 output = outputs[idx].detach().numpy().transpose((1,2,0))
+#                 axarr[idx,0].imshow(image)
+#                 axarr[idx,1].imshow(target)
+#                 axarr[idx,2].imshow(output)
+#             plt.show()
+
+#             iou_sum += func.intersectionOverUnion(outputs,label_imgs)
+#             num_steps = step
+# print('total IoU = {}'.format(iou_sum/num_steps))
+
 
 #     batch_size = 1
 # c, h, w = 3, 10, 10
