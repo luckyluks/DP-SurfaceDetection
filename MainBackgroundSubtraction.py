@@ -4,8 +4,8 @@ from skimage import data, filters
 import Functions as func
 
 # Open Video
-cap = cv2.VideoCapture("4.mp4")
-bg = cv2.VideoCapture('Background.mp4')
+cap = cv2.VideoCapture("newE_Nov29-102538_30s-6fps.mp4")
+bg = cv2.VideoCapture('bgnov29edit.mp4')
 
 # Method select: CH (Convex Hull), GC (GrabCut), rgbGC (Color GrabCut)
 selection = 'rgbGC'

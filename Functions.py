@@ -135,8 +135,11 @@ def GrabCutPixel(hullframe, img, dframe, sureFrame, surebgFrame):
 
     bgdModel = np.zeros((1, 65), np.float64)
     fgdModel = np.zeros((1, 65), np.float64)
-    cv2.grabCut(img, mask, None, bgdModel, fgdModel, 5, cv2.GC_INIT_WITH_MASK)
-    mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
+    if (1 or 3) in mask:
+        cv2.grabCut(img, mask, None, bgdModel, fgdModel, 5, cv2.GC_INIT_WITH_MASK)
+        mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
+    else:
+        mask2 = np.zeros(img.shape[:2], np.uint8)
     frame = img * mask2[:, :, np.newaxis]
     grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     th, dframe = cv2.threshold(grayFrame, 1, 255, cv2.THRESH_BINARY)
