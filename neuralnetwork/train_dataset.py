@@ -69,12 +69,12 @@ path_test = "/media/zed/Data/gtdata/data/trueFrames"
 
 
 # setup
-num_epochs = 2
+num_epochs = 10
 num_epochs_eval = 1
-batch_size = 8
+batch_size = 10
 batch_size_eval = 2
-learning_rate = 0.001
-model_id = "3"
+learning_rate = 0.0001
+model_id = "5"
 
 image_paths = os.listdir(path_train)
 target_paths = os.listdir(path_test)
@@ -139,17 +139,14 @@ optimizer = torch.optim.Adam(network.parameters(), lr=learning_rate)
 epoch_losses_train = []
 epoch_losses_val = []
 for epoch in range(num_epochs):
-    print ("###########################")
-    print ("######## NEW EPOCH ########")
-    print ("###########################")
-    print ("epoch: %d/%d (offset: %d)" % (epoch+1, num_epochs, epoch_offset))
+    print ("################################### NEW EPOCH : %d/%d (offset: %d)" % (epoch+1, num_epochs, epoch_offset))
 
     ############################################################################
     # train:
     ############################################################################
     network.train() # (set in training mode, this affects BatchNorm and dropout)
     batch_losses = []
-    for step, (imgs, label_imgs) in enumerate(tqdm(train_loader)):
+    for step, (imgs, label_imgs, _) in enumerate(tqdm(train_loader)):
         #current_time = time.time()
 
         imgs = Variable(imgs).to(device) # (shape: (batch_size, 3, img_h, img_w))
@@ -225,7 +222,7 @@ for epoch in range(num_epochs):
     plt.savefig("%s/epoch_losses_train.png" % model_dir)
     plt.close(1)
 
-    print ("####")
+    # print ("####")
 
     # ############################################################################
     # # val:

@@ -48,7 +48,7 @@ output_folder = "/media/zed/Data/gtdata/dataTest/predictions"
 # num_epochs_eval = 1
 batch_size = 1
 # learning_rate = 0.001
-# model_id = "1"
+model_id = 0
 
 image_paths = os.listdir(path_train)
 target_paths = os.listdir(path_test)
@@ -100,9 +100,10 @@ model_dir = os.path.join(os.getcwd(),"neuralnetwork","model")
 network =  U_Net(img_ch=3,output_ch=2)
 model_dir_files = os.listdir(model_dir)
 
-all_model_checkpoints = [ string for string in model_dir_files if "model_" in string]
-previous_model_ids = [int(filename.split("_")[1]) for filename in all_model_checkpoints]
-model_id = max(previous_model_ids)
+if model_id == 0:
+    all_model_checkpoints = [ string for string in model_dir_files if "model_" in string]
+    previous_model_ids = [int(filename.split("_")[1]) for filename in all_model_checkpoints]
+    model_id = max(previous_model_ids)
 model_id_checkpoints = [ string for string in model_dir_files if "model_"+str(model_id) in string]
 epoch_numbers = [int(filename.split("_")[-1].split(".")[0]) for filename in model_id_checkpoints]
 model_dir = os.path.join(os.getcwd(),"neuralnetwork","model")
@@ -124,7 +125,7 @@ network.eval()
 
 iou_sum = 0
 num_steps = 0
-for step, (imgs, label_imgs) in enumerate(tqdm(val_loader)):
+for step, (imgs, label_imgs, file_name) in enumerate(tqdm(val_loader)):
         with torch.no_grad(): # (corresponds to setting volatile=True in all variables, this is done during inference to reduce memory consumption)
             imgs = Variable(imgs).to(device) # (shape: (batch_size, 3, img_h, img_w))
             label_imgs = label_imgs.squeeze(1)
@@ -154,7 +155,7 @@ for step, (imgs, label_imgs) in enumerate(tqdm(val_loader)):
                 image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
                 images = np.hstack((image_gray*255, target*255, output*255))
 
-                cv2.imwrite(os.path.join(output_folder, str('images'+str(step)+'.png')),images)
+                cv2.imwrite(os.path.join(output_folder, file_name[0]),images)
                
 
 
