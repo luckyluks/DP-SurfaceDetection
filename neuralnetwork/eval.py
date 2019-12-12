@@ -87,12 +87,6 @@ print("done")
 
 
 
-# network
-network =  U_Net(img_ch=3,output_ch=2)
-
-model_dir = os.path.join(os.getcwd(),"neuralnetwork","model")
-state = torch.load(os.path.join(model_dir, "model_3_epoch_5.pth"))
-network.load_state_dict(state)
 
 
 # network
@@ -141,6 +135,8 @@ for step, (imgs, label_imgs, file_name) in enumerate(tqdm(val_loader)):
 
             outputs = torch.argmax(outputs, dim=1)
 
+            # (np.unique(outputs.cpu()))
+
             # print("img: \t", imgs.shape)
             # print("tar: \t", label_imgs.shape)
             # print("out: \t", outputs.shape)
@@ -154,9 +150,14 @@ for step, (imgs, label_imgs, file_name) in enumerate(tqdm(val_loader)):
 
                 image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
                 images = np.hstack((image_gray*255, target*255, output*255))
+                
 
                 cv2.imwrite(os.path.join(output_folder, file_name[0]),images)
                
+                # img = cv2.imread(os.path.join(output_folder, file_name[0]),0)
+                # cv2.namedWindow('frames', cv2.WINDOW_AUTOSIZE)
+                # cv2.imshow('frames', img)
+                # cv2.waitKey(0)
 
 
                 # axarr[idx,0].imshow(Image.fromarray(image))

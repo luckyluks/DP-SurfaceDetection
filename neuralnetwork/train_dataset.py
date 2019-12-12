@@ -74,7 +74,7 @@ num_epochs_eval = 1
 batch_size = 10
 batch_size_eval = 2
 learning_rate = 0.0001
-model_id = "5"
+model_id = "6"
 
 image_paths = os.listdir(path_train)
 target_paths = os.listdir(path_test)
@@ -82,7 +82,7 @@ target_paths = os.listdir(path_test)
 image_paths = [os.path.join(path_train, image_item) for image_item in image_paths]
 
 target_paths = [os.path.join(path_test, target_item) for target_item in target_paths]
-dataset = MyDataset(image_paths, target_paths)
+dataset = MyDataset(image_paths, target_paths, train=True)
 
 # n_samples = len(dataset)
 # n_train_samples = int(n_samples*0.7)
