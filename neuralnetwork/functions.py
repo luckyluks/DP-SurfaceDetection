@@ -277,5 +277,5 @@ def intersectionOverUnion(imPred, imLabel):
     (area_pred, _) = np.histogram(imPred, bins=2, range=(1, 2))
     (area_lab, _) = np.histogram(imLabel, bins=2, range=(1, 2))
     area_union = area_pred + area_lab - area_intersection
-
+  
     return area_intersection/area_union

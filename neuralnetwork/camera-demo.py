@@ -7,9 +7,19 @@ from torchvision import transforms
 import torch
 from torch.autograd import Variable
 from PIL import Image
+import functions as func
+import statistics as st
 
 from networks import *
 
+
+#decide color thresholds
+rThresh = 60
+gThresh = 60
+bThresh = 60
+
+#decide to run quick demo for just show with only network or 'full demo' with bg sub and statistics
+fullDemo = False
 
 print("-"*110)
 print("LIVE DEMO:")
@@ -45,8 +55,8 @@ network.eval()
 pipeline = rs.pipeline()
 config = rs.config()
 framerate = 30
-frame_width = 1280
-frame_height = 720
+frame_width = 640
+frame_height = 480
 # config.enable_stream(rs.stream.depth, frame_width, frame_height, rs.format.z16, framerate)
 config.enable_stream(rs.stream.color, frame_width, frame_height, rs.format.bgr8, framerate)
 
@@ -54,7 +64,96 @@ config.enable_stream(rs.stream.color, frame_width, frame_height, rs.format.bgr8,
 profile = pipeline.start(config)
 sensor_rgb = pipeline.get_active_profile().get_device().query_sensors()[1]
 
+if fullDemo:
+    sensor_rgb.set_option(rs.option.enable_auto_exposure, 0.0)
+    sensor_rgb.set_option(rs.option.enable_auto_white_balance, 0.0)
+
+    iouBgSubList = []
+    iouNetworkList = []
+    inferenceTimeBgSubList = []
+    inferenceTimeNetworkList = []
+
+else:
+    sensor_rgb.set_option(rs.option.enable_auto_exposure, 1.0)
+    sensor_rgb.set_option(rs.option.enable_auto_white_balance, 1.0)
+
+e1 = cv2.getTickCount()
+
 try:
+
+    if fullDemo:
+        # warmup camera
+        while True:
+                sensor_rgb.set_option(rs.option.enable_auto_exposure, 1.0)
+                sensor_rgb.set_option(rs.option.enable_auto_white_balance, 1.0)
+                frames = pipeline.wait_for_frames()
+
+                cv2.namedWindow('warmup', cv2.WINDOW_AUTOSIZE)
+                color_image = np.asanyarray(frames.get_color_frame().get_data())
+                cv2.imshow('warmup', color_image)
+                cv2.waitKey(1)
+
+                e2 = cv2.getTickCount()
+                t = (e2 - e1) / cv2.getTickFrequency()
+                if t > 10: 
+                        print("Done warmup!")
+                        break
+        cv2.destroyAllWindows()                
+        sensor_rgb.set_option(rs.option.enable_auto_exposure, 0.0)
+        sensor_rgb.set_option(rs.option.enable_auto_white_balance, 0.0)
+
+
+
+        #record background plate
+        e1 = cv2.getTickCount()
+        frame_counter = 0
+        framesbgall = []
+
+        print('recording background for 15 seconds')
+        while True:
+
+            # Wait for a coherent pair of frames: depth and color
+            # frames = pipeline.wait_for_frames()
+            color_frame = frames.get_color_frame()
+            if not color_frame:
+                continue
+
+            # Convert images to numpy arrays
+            color_image = np.asanyarray(color_frame.get_data())
+
+            #Store all bg frames
+            framesbgall.append(color_image)
+            frame_counter+=1
+            
+            e2 = cv2.getTickCount()
+            t = (e2 - e1) / cv2.getTickFrequency()
+            if t > 15: # 15 second background video
+                print('background recording done')
+        
+                break
+
+        #randomly select 25 frames
+        frameIds = framerate*15*np.random.uniform(size=25)    
+
+        framesbg = []
+        # Store selected frames in an array
+        for fid in frameIds:
+            fid = np.round(fid).astype(np.uint8)
+            framebge = framesbgall[fid]
+            framesbg.append(framebge)
+
+        # Convert to 8bit int
+        medianFrame = np.median(framesbg, axis=0).astype(dtype=np.uint8)
+
+        # Convert background to grayscale
+        grayMedianFrame = cv2.cvtColor(medianFrame, cv2.COLOR_BGR2GRAY)
+
+        #Split frame into color channels
+        rMedian, gMedian, bMedian = func.ChannelSplit(medianFrame)
+
+
+
+    totalFrame = 0
     while True:
 
         # Wait for a coherent pair of frames: depth and color
@@ -68,8 +167,35 @@ try:
 
         # Convert images to numpy arrays
         color_image = np.asanyarray(color_frame_data)
-
         color_image_PIL = Image.fromarray(color_image)
+
+
+        if fullDemo:
+            framex = color_image
+
+            e1 = cv2.getTickCount()
+
+            dframe = func.RGBConvexHull(framex, rMedian, gMedian, bMedian, rThresh, gThresh, bThresh)
+            e2 = cv2.getTickCount()
+            inferenceTimeBGsub = (e2 - e1) / cv2.getTickFrequency()
+
+            sureFrame = func.RGBConvexHull(framex, rMedian, gMedian, bMedian, 100, 100, 100)
+            surebgFrame = func.RGBConvexHull(framex, rMedian, gMedian, bMedian, 30, 30, 30)
+            # gframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+
+            # Do 2 passes to create a filled in convex hull of all moving objects
+            hullframe, hull = func.CHI(dframe, 2, 50)
+            # Remove small artifacts created by the background subtraction
+            noArtframe = func.ArtFilt(hullframe, 100)
+
+
+            noArtframe = noArtframe.astype(np.uint8)
+            hullframe, hull = func.CHI(noArtframe, 2, 50)
+            groundTruth = func.GrabCutPixel(hullframe, framex, dframe, sureFrame, surebgFrame)
+
+            
+
 
 
         resize = transforms.Resize(size=(240, 320))
@@ -77,7 +203,7 @@ try:
 
         grey_image = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
 
-        
+        e1 = cv2.getTickCount()
         # Convert to pytorch tensor
         tensor_image = Variable(TF.to_tensor(color_image_PIL).unsqueeze(0)).to(device)
 
@@ -95,6 +221,9 @@ try:
         tensor_image = cv2.cvtColor(tensor_image, cv2.COLOR_BGR2GRAY)
         prediction_image = prediction[0].cpu().detach().numpy().transpose((0,1)).astype(dtype=np.uint8)
         # prediction_image = prediction[0].cpu().detach().numpy().transpose((0,1))
+        e2 = cv2.getTickCount()
+        inferenceTimeNetwork = (e2 - e1) / cv2.getTickFrequency()
+
 
         np.max(np.unique(prediction_image.astype(dtype=np.uint8)))
 
@@ -106,13 +235,39 @@ try:
         # depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha=0.03, beta=0.03), cv2.COLORMAP_JET)
         # depth_u8 = cv2.convertScaleAbs(depth_image, alpha=0.08,beta=0.03)
 
-        # Stack both images horizontally
-        images = np.hstack((tensor_image, prediction_image))
+        if fullDemo:
+            bgsub = dframe
+            # Stack all images
+            imagesTop = np.hstack((tensor_image, groundTruth))
+            imagesBottom = np.hstack((bgsub,prediction_image))
+            combimg = np.vstack((imagesTop,imagesBottom))
+        else:
+            combimg = np.hstack((tensor_image,prediction_image))
+
+        if fullDemo: 
+            #reformat some frames for IoU calculation
+            bgsubc = (bgsub/255).astype(np.uint8)
+            groundTruthc = (groundTruth/255).astype(np.uint8)
+
+            #print IoU and inference time every second
+            ioubgsub = func.intersectionOverUnion(bgsubc,groundTruthc)
+            iounetwork = func.intersectionOverUnion(prediction_image,groundTruthc)
+            if(totalFrame % 5 == 0):
+                os.system('clear')
+                print('IoU for background subtraction: {} for neural network: {}'.format(ioubgsub,iounetwork))
+                print('Inference time for background subtraction: {} for neural network: {}'.format(inferenceTimeBGsub,inferenceTimeNetwork))
+            iouBgSubList.append(ioubgsub[-1])
+            iouNetworkList.append(iounetwork[-1])
+            inferenceTimeBgSubList.append(inferenceTimeBGsub)
+            inferenceTimeNetworkList.append(inferenceTimeNetwork)
 
         # Show images
         cv2.namedWindow('frames', cv2.WINDOW_AUTOSIZE)
-        cv2.imshow('frames', images)
+        cv2.imshow('frames', combimg)
         key = cv2.waitKey(1)
+
+        # increase framecounter
+        totalFrame +=1
 
         # Press esc or 'q' to close the image window
         if key & 0xFF == ord('q') or key == 27:
@@ -124,6 +279,15 @@ finally:
     pipeline.stop()
     cv2.destroyAllWindows()
 
+    if fullDemo:
+        meanIouBgSub = st.mean(iouBgSubList)
+        meanIouNetwork = st.mean(iouNetworkList) 
+        meanInferenceTimeBgSub = st.mean(inferenceTimeBgSubList)
+        meanInferenceTimeNetwork = st.mean(inferenceTimeNetworkList)
+
+        #here mean IoU is just for foreground 
+        print('mean IoU for background subtraction: {} for neural network: {}'.format(meanIouBgSub,meanIouNetwork))
+        print('mean Inference time for background subtraction: {} for neural network: {}'.format(meanInferenceTimeBgSub,meanInferenceTimeNetwork))
 
 
 # cap = cv2.VideoCapture(1)
