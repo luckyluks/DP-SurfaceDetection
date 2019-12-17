@@ -98,6 +98,8 @@ venv.bak/
 #checkpoints
 .pth
 *.pth
+.pt
+*.pt
 LukasModel/
 
 #odgt files
