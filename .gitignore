@@ -101,6 +101,7 @@ venv.bak/
 .pt
 *.pt
 LukasModel/
+UnetPTchks/
 
 #odgt files
 .odgt
