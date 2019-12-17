@@ -55,8 +55,11 @@ path_test = '../input/test/'
 # path_train = "C:\\Users\\lukas\\workspace\\data\\raw_data\\Frames"
 # path_test = "C:\\Users\\lukas\\workspace\\data\\raw_data\\trueFrames"
 
-path_train = "/media/zed/Data/gtdata/data/Frames"
-path_test = "/media/zed/Data/gtdata/data/trueFrames"
+# path_train = "/media/zed/Data/gtdata/data/Frames"
+# path_test = "/media/zed/Data/gtdata/data/trueFrames"
+
+path_train = 'data/Frames'
+path_test = 'data/trueFrames'
 
 
 
@@ -69,7 +72,7 @@ path_test = "/media/zed/Data/gtdata/data/trueFrames"
 
 
 # setup
-num_epochs = 10
+num_epochs = 4
 num_epochs_eval = 1
 batch_size = 10
 batch_size_eval = 2

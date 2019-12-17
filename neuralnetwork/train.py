@@ -27,8 +27,8 @@ from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_a
 
 
 # Set some parameters
-im_width = 128
-im_height = 128
+# im_width = 128
+# im_height = 128
 border = 5
 path_train =  r'data'
 path_test = '../input/test/'
