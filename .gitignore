@@ -95,6 +95,11 @@ venv.bak/
 .png
 *.png
 
+#checkpoints
+.pth
+*.pth
+LukasModel/
+
 #odgt files
 .odgt
 *.odgt
