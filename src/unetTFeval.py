@@ -34,11 +34,17 @@ border = 5
 os.makedirs('data/outputUnetTF', exist_ok=True)
 
 
-path_train =  r'data'
+path_val =  r'data/'
 
 
-np.random.seed(1337)
-order = np.random.randint(1,7564,size=500)
+
+#if no shuffle (big dataset)
+# np.random.seed(1337)
+# order = np.random.randint(4662,6660,size=500)
+
+#else use all images
+order = np.linspace(4502,5405,904).astype('int')
+
 
 
 def get_data(path, train=True):
@@ -49,12 +55,12 @@ def get_data(path, train=True):
     print('Getting and resizing images ... ')
     for n, id_ in enumerate(order):
         # Load images
-        img = load_img(path + '/Frames/frame' + str(id_) + '.jpg', grayscale=True)
+        img = load_img(path + '/testFrames/frame' + str(id_) + '.jpg', grayscale=True)
         x_img = img_to_array(img)
         x_img = resize(x_img, (im_height, im_width, 1), mode='constant', preserve_range=True)  #EDIT
 
         # Load masks
-        mask = img_to_array(load_img(path + '/trueFrames/frame' + str(id_) + '.jpg', grayscale=True))
+        mask = img_to_array(load_img(path + '/testtrueFrames/frame' + str(id_) + '.jpg', grayscale=True))
         mask = resize(mask, (im_height, im_width, 1), mode='constant', preserve_range=True)
 
         # Save images
@@ -63,7 +69,7 @@ def get_data(path, train=True):
     print('Done!')
     return X,y
 
-X_valid, y_valid  = get_data(path_train, train=False)
+X_valid, y_valid  = get_data(path_val, train=False)
 
 # Split train and valid
 # X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.3, random_state=2018)
@@ -149,7 +155,7 @@ print('weights loaded')
 print('predicting')
 
 iousum = 0
-for imn in range(500):
+for imn in range(904):
 
     print(imn)
 

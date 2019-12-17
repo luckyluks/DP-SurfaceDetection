@@ -89,10 +89,17 @@ def crop_image(img, pads):
 
     return img[y_min_pad:height - y_max_pad, x_min_pad:width - x_max_pad]
 
-model = get_model()
 
-np.random.seed(1337)
-order = np.random.randint(1, 7564,size=500)
+
+#if no shuffle (big dataset)
+# np.random.seed(1337)
+# order = np.random.randint(4662,6660,size=500)
+# if between new order FIX
+
+#else use all images
+order = np.linspace(4502,5405,904).astype('int')
+
+
 
 iousum = 0
 for imn in range(500):

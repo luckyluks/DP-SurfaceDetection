@@ -75,7 +75,7 @@ def main(devid, bsize, fold, work, lr, nep, jcwe, modelc, th, tw, vh, vw):
     elif args.type == 'instruments':
         num_classes = 8
     else:
-        num_classes = 1
+        num_classes = 1     #EDIT
 
     if args.model == 'UNet':
         model = UNet(num_classes=num_classes)

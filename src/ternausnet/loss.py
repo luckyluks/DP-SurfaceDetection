@@ -16,6 +16,7 @@ class LossBinary:
 
     def __call__(self, outputs, targets):
         loss = (1 - self.jaccard_weight) * self.nll_loss(outputs, targets)
+        print(loss)
 
         if self.jaccard_weight:
             eps = 1e-15
