@@ -77,7 +77,7 @@ num_epochs_eval = 1
 batch_size = 10
 batch_size_eval = 2
 learning_rate = 0.0001
-model_id = "6"
+model_id = "7"
 
 image_paths = os.listdir(path_train)
 target_paths = os.listdir(path_test)

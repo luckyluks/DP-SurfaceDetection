@@ -11,7 +11,8 @@ class MyDataset(Dataset):
         self.target_paths = target_paths
         self.train = train
         # Color jitter
-        # self.colorTransform = transforms.Compose([transforms.ColorJitter(brightness=0.25, contrast=0.25, saturation=0.25, hue=0.1)])
+        self.colorTransform = transforms.Compose([transforms.ColorJitter(brightness=0.25, contrast=0.25, saturation=0.25, hue=0.1)
+        ])
 
     def transform(self, image, mask):
         
@@ -28,22 +29,20 @@ class MyDataset(Dataset):
         #     mask = TF.crop(mask, i, j, h, w)
 
         # Random horizontal flipping
-        # if self.train:
-        #     if random.random() > 0.5:
-        #         image = TF.hflip(image)
-        #         mask = TF.hflip(mask)
+        if self.train:
+            if random.random() > 0.5:
+                image = TF.hflip(image)
+                mask = TF.hflip(mask)
 
         # Random vertical flipping
-        # if self.train:
-        #     if random.random() > 0.5:
-        #         image = TF.vflip(image)
-        #         mask = TF.vflip(mask)
+        if self.train:
+            if random.random() > 0.5:
+                image = TF.vflip(image)
+                mask = TF.vflip(mask)
             
             
 
-        # Transform to tensor
-        image = TF.to_tensor(image)
-        mask = TF.to_tensor(mask)
+       
         return image, mask
 
     def __getitem__(self, index):
@@ -57,6 +56,10 @@ class MyDataset(Dataset):
 
         #color jitter 
         # x = self.colorTransform(x)
+
+        # Transform to tensor
+        x = TF.to_tensor(x)
+        y = TF.to_tensor(y)
 
         return x, y, file_name
         
