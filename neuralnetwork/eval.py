@@ -38,16 +38,16 @@ path_test = '../input/test/'
 
 path_train = "/media/zed/Data/gtdata/dataTest/Frames"
 path_test = "/media/zed/Data/gtdata/dataTest/trueFrames"
-
-
 output_folder = "/media/zed/Data/gtdata/dataTest/predictions"
+
+path_train = "C:\\Users\\lukas\\workspace\\data\\GrabCutGroundTruthDec10\\data_splitted_M-building\\FramesVal"
+path_test = "C:\\Users\\lukas\\workspace\\data\\GrabCutGroundTruthDec10\\data_splitted_M-building\\trueFramesVal"
+output_folder = "C:\\Users\\lukas\\workspace\\data\\GrabCutGroundTruthDec10\\data_splitted_M-building\\predictions"
+
 
 
 # setup
-# num_epochs = 2
-# num_epochs_eval = 1
 batch_size = 1
-# learning_rate = 0.001
 model_id = 0
 
 image_paths = os.listdir(path_train)
@@ -70,24 +70,7 @@ val_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("using device: ", device)
-
-
-
-# print("train_data_loader:", len(train_loader.dataset))
-print("val_data_loader:", len(val_loader.dataset))
-# import matplotlib.pyplot as plt
-print("done")
-
-# for x,y in train_data_loader:
-#     plt.imshow(x[0].numpy().transpose((1, 2, 0)), cmap='gray');
-#     plt.show()
-#     plt.imshow(y[0].numpy().transpose((1, 2, 0)), cmap='gray');
-#     plt.show()
-#     break
-
-
-
-
+print("val_data_loader files:", len(val_loader.dataset))
 
 # network
 model_dir = os.path.join(os.getcwd(),"neuralnetwork","model")
@@ -110,12 +93,6 @@ print("loaded previous checkpoint ( {}): {}".format(epoch_offset, model_file_nam
 network.to(device)
 network.eval()
 
-
-# loss function
-# loss_fn = nn.CrossEntropyLoss()
-
-# # params = add_weight_decay(network, l2_value=0.0001)
-# optimizer = torch.optim.Adam(network.parameters(), lr=learning_rate)
 
 iou_sum = 0
 num_steps = 0
@@ -168,23 +145,3 @@ for step, (imgs, label_imgs, file_name) in enumerate(tqdm(val_loader)):
             iou_sum += func.intersectionOverUnion(outputs,label_imgs)
             num_steps = step
 print('total for IoU = {}'.format(iou_sum/num_steps))
-
-
-#     batch_size = 1
-# c, h, w = 3, 10, 10
-# nb_classes = 5
-
-# x = torch.randn(batch_size, c, h, w)
-# target = torch.empty(batch_size, h, w, dtype=torch.long).random_(nb_classes)
-
-# model = nn.Sequential(
-#     nn.Conv2d(c, 6, 3, 1, 1),
-#     nn.ReLU(),
-#     nn.Conv2d(6, nb_classes, 3, 1, 1)
-# )
-
-# criterion = nn.CrossEntropyLoss()
-
-# output = model(x)
-# loss = criterion(output, target)
-# loss.backward()
