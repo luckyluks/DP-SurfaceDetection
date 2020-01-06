@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-import alphashape as ash
+# import alphashape as ash
 
 def CHI(thresh, passes, cutoff):
     for i in range(1, passes):

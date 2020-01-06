@@ -29,11 +29,11 @@ from deeplabv3 import *
 
 
 # setup
-num_epochs = 10
+num_epochs = 2
 batch_size = 4 # unet 8
 batch_size_eval = 4 # unet 2
-learning_rate = 0.00001
-model_id = "22"
+learning_rate = 0.000001
+model_id = "23"
 
 # 14: dl-lr: 10*0.001 +  10*0.00001
 # 15  dl-lr: 5*0.01 +  5*0.00001 + 5*0.0001
@@ -44,6 +44,7 @@ model_id = "22"
 #20 DL 512x512:  5*0.0001 +  5*0.00001 +5*0.0001
 #21 DL 512x512:  +5*0.00001 +5*0.000001
 #22 DL 512x512:   15*0.001 +5*0.00001
+#23 DL (640, 480): 5*0.00001
 
 # Set paths -- splits if validation folders are not defined!!
 if platform.system()=="Windows":
@@ -67,13 +68,13 @@ if os.path.exists(path_train_images) and os.path.exists(path_train_targets):
     # get all file names from directories
     image_paths = [os.path.join(path_train_images, image_item) for image_item in os.listdir(path_train_images)]
     target_paths = [os.path.join(path_train_targets, target_item) for target_item in os.listdir(path_train_targets)]
-    dataset = MyDataset(image_paths, target_paths, train=True, resize_size=(512, 512)) #(320, 240) #(512, 512)
+    dataset = MyDataset(image_paths, target_paths, train=True, resize_size=(640, 480)) #(320, 240) #(512, 512) # (640, 480)
 
     if (path_val_images!=None) and (path_val_targets!=None):
         val_image_paths = [os.path.join(path_val_images, image_item) for image_item in os.listdir(path_val_images)]
         val_target_paths = [os.path.join(path_val_targets, target_item) for target_item in os.listdir(path_val_targets)]
 
-        val_dataset = MyDataset(val_image_paths, val_target_paths, train=False, resize_size=(512, 512)) #(320, 240) #(512, 512)
+        val_dataset = MyDataset(val_image_paths, val_target_paths, train=False, resize_size=(640, 480)) #(320, 240) #(512, 512)
         train_dataset = dataset
     else:        
         n_samples = len(dataset)
