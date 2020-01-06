@@ -48,7 +48,7 @@ output_folder = "C:\\Users\\lukas\\workspace\\data\\GrabCutGroundTruthDec10\\dat
 
 # setup
 batch_size = 1
-model_id = 0
+model_id = 0 
 
 image_paths = os.listdir(path_train)
 target_paths = os.listdir(path_test)
@@ -58,7 +58,7 @@ target_paths = [os.path.join(path_test, target_item) for target_item in target_p
 
 # image_paths = ['./data/0.png', './data/1.png']
 # target_paths = ['./target/0.png', './target/1.png']
-dataset = MyDataset(image_paths, target_paths, train=False)
+dataset = MyDataset(image_paths, target_paths, train=False, resize_size=(640, 480))
 
 # n_samples = len(dataset)
 # n_train_samples = int(n_samples*0.7)
@@ -77,8 +77,12 @@ model_dir = os.path.join(os.getcwd(),"neuralnetwork","model")
 network =  U_Net(img_ch=3,output_ch=2)
 model_dir_files = os.listdir(model_dir)
 
+from modeling.sync_batchnorm.replicate import patch_replication_callback
+from modeling.deeplab import *
+network = DeepLab(num_classes=2)
+
 if model_id == 0:
-    all_model_checkpoints = [ string for string in model_dir_files if "model_" in string]
+    all_model_checkpoints = [ string for string in model_dir_files if "model_" in string] 
     previous_model_ids = [int(filename.split("_")[1]) for filename in all_model_checkpoints]
     model_id = max(previous_model_ids)
 model_id_checkpoints = [ string for string in model_dir_files if "model_"+str(model_id) in string]
@@ -89,6 +93,11 @@ state = torch.load(os.path.join(model_dir, model_file_name))
 network.load_state_dict(state)
 epoch_offset = max(epoch_numbers)
 print("loaded previous checkpoint ( {}): {}".format(epoch_offset, model_file_name))
+
+# create specific output folder if not already created
+output_folder = os.path.join(output_folder,"m"+str(model_id))
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
 
 network.to(device)
 network.eval()

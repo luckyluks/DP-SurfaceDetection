@@ -6,10 +6,11 @@ import random
 from torch.utils.data import Dataset, DataLoader
 
 class MyDataset(Dataset):
-    def __init__(self, image_paths, target_paths, train=True):
+    def __init__(self, image_paths, target_paths, train=True, resize_size=(320, 240)):
         self.image_paths = image_paths
         self.target_paths = target_paths
         self.train = train
+        self.resize_size=resize_size
         # Color jitter
         self.colorTransform = transforms.Compose([transforms.ColorJitter(brightness=0.25, contrast=0.25, saturation=0.25, hue=0.1)
         ])
@@ -18,9 +19,13 @@ class MyDataset(Dataset):
         
         # Resize
         if self.train:
-            resize = transforms.Resize(size=(320, 240))
+            resize = transforms.Resize(size=self.resize_size)
             image = resize(image)
             mask = resize(mask)
+
+        if self.train:
+            if random.random() > 0.5:
+                image = self.colorTransform(image)
 
         # Random crop
         # if self.train:
