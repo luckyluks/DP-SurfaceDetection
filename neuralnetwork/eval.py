@@ -24,14 +24,6 @@ from CrossEntropy2d import *
 import functions as func
 
 
-
-# Set some parameters
-im_width = 128
-im_height = 128
-border = 5
-path_train =  r'data'
-path_test = '../input/test/'
-
 # path_root = "C:\\Users\\lukas\\workspace\\data\\raw_data"
 # path_train = "C:\\Users\\lukas\\workspace\\data\\raw_data\\Frames"
 # path_test = "C:\\Users\\lukas\\workspace\\data\\raw_data\\trueFrames"
@@ -44,11 +36,14 @@ path_train = "C:\\Users\\lukas\\workspace\\data\\GrabCutGroundTruthDec10\\data_s
 path_test = "C:\\Users\\lukas\\workspace\\data\\GrabCutGroundTruthDec10\\data_splitted_M-building\\trueFramesVal"
 output_folder = "C:\\Users\\lukas\\workspace\\data\\GrabCutGroundTruthDec10\\data_splitted_M-building\\predictions"
 
+path_train = "/media/zed/Data/gtdata/data_splitted_M-building/FramesVal"
+path_test = "/media/zed/Data/gtdata/data_splitted_M-building/trueFramesVal"
+output_folder = "/media/zed/Data/gtdata/data_splitted_M-building/predictions"
 
 
 # setup
 batch_size = 1
-model_id = 0 
+model_id = 18
 
 image_paths = os.listdir(path_train)
 target_paths = os.listdir(path_test)
@@ -77,9 +72,9 @@ model_dir = os.path.join(os.getcwd(),"neuralnetwork","model")
 network =  U_Net(img_ch=3,output_ch=2)
 model_dir_files = os.listdir(model_dir)
 
-from modeling.sync_batchnorm.replicate import patch_replication_callback
-from modeling.deeplab import *
-network = DeepLab(num_classes=2)
+# from modeling.sync_batchnorm.replicate import patch_replication_callback
+# from modeling.deeplab import *
+# network = DeepLab(num_classes=2)
 
 if model_id == 0:
     all_model_checkpoints = [ string for string in model_dir_files if "model_" in string] 
