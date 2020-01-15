@@ -25,9 +25,15 @@ print("-"*110)
 print("LIVE DEMO:")
 
 # Load newest model or specify one
-model_id = 4        # specify or it will auto-select newest
+model_id = 5       # specify or it will auto-select newest
 
 network =  U_Net(img_ch=3,output_ch=2)
+
+# from modeling.sync_batchnorm.replicate import patch_replication_callback
+# from modeling.deeplab import *
+# network = DeepLab(num_classes=2)
+
+
 model_dir = os.path.join(os.getcwd(),"neuralnetwork","model")
 model_dir_files = os.listdir(model_dir)
 
@@ -256,8 +262,8 @@ try:
                 os.system('clear')
                 print('IoU for background subtraction: {} for neural network: {}'.format(ioubgsub,iounetwork))
                 print('Inference time for background subtraction: {} for neural network: {}'.format(inferenceTimeBGsub,inferenceTimeNetwork))
-            iouBgSubList.append(ioubgsub[-1])
-            iouNetworkList.append(iounetwork[-1])
+            iouBgSubList.append(np.nanmean(ioubgsub))
+            iouNetworkList.append(np.nanmean(iounetwork))
             inferenceTimeBgSubList.append(inferenceTimeBGsub)
             inferenceTimeNetworkList.append(inferenceTimeNetwork)
 
