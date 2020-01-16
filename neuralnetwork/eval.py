@@ -43,7 +43,7 @@ output_folder = "/media/zed/Data/gtdata/data_splitted_M-building/predictions"
 
 # setup
 batch_size = 1
-model_id = 18
+model_id = 33
 
 image_paths = os.listdir(path_train)
 target_paths = os.listdir(path_test)
@@ -72,9 +72,9 @@ model_dir = os.path.join(os.getcwd(),"neuralnetwork","model")
 network =  U_Net(img_ch=3,output_ch=2)
 model_dir_files = os.listdir(model_dir)
 
-# from modeling.sync_batchnorm.replicate import patch_replication_callback
-# from modeling.deeplab import *
-# network = DeepLab(num_classes=2)
+from modeling.sync_batchnorm.replicate import patch_replication_callback
+from modeling.deeplab import *
+network = DeepLab(num_classes=2)
 
 if model_id == 0:
     all_model_checkpoints = [ string for string in model_dir_files if "model_" in string] 

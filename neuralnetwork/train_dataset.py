@@ -29,11 +29,13 @@ from deeplabv3 import *
 
 
 # setup
-num_epochs = 2
-batch_size = 4 # unet 8
-batch_size_eval = 4 # unet 2
-learning_rate = 0.000001
-model_id = "23"
+num_epochs = 4
+batch_size = 32# unet 8
+batch_size_eval = 8 # unet 2
+learning_rate = 0.00001
+model_id = "33"
+
+train_resize_size = (320, 240)  #(320, 240) #(512, 512) # (640, 480)
 
 # 14: dl-lr: 10*0.001 +  10*0.00001
 # 15  dl-lr: 5*0.01 +  5*0.00001 + 5*0.0001
@@ -45,6 +47,11 @@ model_id = "23"
 #21 DL 512x512:  +5*0.00001 +5*0.000001
 #22 DL 512x512:   15*0.001 +5*0.00001
 #23 DL (640, 480): 5*0.00001
+
+#30: DL 4*0.0001 (320, 240) -without all
+#31: DL 4*0.0001 (320, 240) -with color jitter
+#32: DL 4*0.0001 (320, 240) -with rand  flip
+#33: DL 4*0.0001 (320, 240) -with rand crop
 
 # Set paths -- splits if validation folders are not defined!!
 if platform.system()=="Windows":
@@ -68,13 +75,13 @@ if os.path.exists(path_train_images) and os.path.exists(path_train_targets):
     # get all file names from directories
     image_paths = [os.path.join(path_train_images, image_item) for image_item in os.listdir(path_train_images)]
     target_paths = [os.path.join(path_train_targets, target_item) for target_item in os.listdir(path_train_targets)]
-    dataset = MyDataset(image_paths, target_paths, train=True, resize_size=(640, 480)) #(320, 240) #(512, 512) # (640, 480)
+    dataset = MyDataset(image_paths, target_paths, train=True, resize_size=train_resize_size) 
 
     if (path_val_images!=None) and (path_val_targets!=None):
         val_image_paths = [os.path.join(path_val_images, image_item) for image_item in os.listdir(path_val_images)]
         val_target_paths = [os.path.join(path_val_targets, target_item) for target_item in os.listdir(path_val_targets)]
 
-        val_dataset = MyDataset(val_image_paths, val_target_paths, train=False, resize_size=(640, 480)) #(320, 240) #(512, 512)
+        val_dataset = MyDataset(val_image_paths, val_target_paths, train=False, resize_size=train_resize_size) #(320, 240) #(512, 512)
         train_dataset = dataset
     else:        
         n_samples = len(dataset)
@@ -94,9 +101,10 @@ else:
 
 # network
 model_dir = os.path.join(os.getcwd(),"neuralnetwork","model")
-network =  U_Net(img_ch=3,output_ch=2)
 model_dir_files = os.listdir(model_dir)
 previous_model_checkpoints = [ string for string in model_dir_files if "model_"+model_id in string]
+
+# network =  U_Net(img_ch=3,output_ch=2)
 
 from modeling.sync_batchnorm.replicate import patch_replication_callback
 from modeling.deeplab import *
@@ -207,37 +215,37 @@ for epoch in range(num_epochs):
 
     print ("####")
 
-    # ############################################################################
-    # # val:
-    # ############################################################################
-    # network.eval() # (set in evaluation mode, this affects BatchNorm and dropout)
-    # batch_losses = []
-    # for step, (imgs, label_imgs, file_name) in enumerate(tqdm(val_loader)):
-    #     with torch.no_grad(): # (corresponds to setting volatile=True in all variables, this is done during inference to reduce memory consumption)
-    #         imgs = Variable(imgs).to(device) # (shape: (batch_size, 3, img_h, img_w))
-    #         label_imgs = label_imgs.squeeze(1)
-    #         label_imgs = Variable(label_imgs.type(torch.LongTensor)).to(device) # (shape: (batch_size, img_h, img_w))
+    ############################################################################
+    # val:
+    ############################################################################
+    network.eval() # (set in evaluation mode, this affects BatchNorm and dropout)
+    batch_losses = []
+    for step, (imgs, label_imgs, file_name) in enumerate(tqdm(val_loader)):
+        with torch.no_grad(): # (corresponds to setting volatile=True in all variables, this is done during inference to reduce memory consumption)
+            imgs = Variable(imgs).to(device) # (shape: (batch_size, 3, img_h, img_w))
+            label_imgs = label_imgs.squeeze(1)
+            label_imgs = Variable(label_imgs.type(torch.LongTensor)).to(device) # (shape: (batch_size, img_h, img_w))
 
-    #         outputs = network(imgs) # (shape: (batch_size, num_classes, img_h, img_w))
+            outputs = network(imgs) # (shape: (batch_size, num_classes, img_h, img_w))
 
-    #         # compute the loss:
-    #         loss = loss_fn(outputs, label_imgs)
-    #         loss_value = loss.data.cpu().numpy()
-    #         batch_losses.append(loss_value)
+            # compute the loss:
+            loss = loss_fn(outputs, label_imgs)
+            loss_value = loss.data.cpu().numpy()
+            batch_losses.append(loss_value)
 
-    # epoch_loss = np.mean(batch_losses)
-    # epoch_losses_val.append(epoch_loss)
-    # with open("%s/epoch_losses_val.pkl" % model_dir, "wb") as file:
-    #     pickle.dump(epoch_losses_val, file)
-    # print ("val loss: %g" % epoch_loss)
-    # plt.figure(1)
-    # plt.plot(epoch_losses_val, "k^")
-    # plt.plot(epoch_losses_val, "k")
-    # plt.ylabel("loss")
-    # plt.xlabel("epoch")
-    # plt.title("val loss per epoch")
-    # plt.savefig("{}/epoch_losses_val_{}.png".format(model_dir,model_id))
-    # plt.close(1)
+    epoch_loss = np.mean(batch_losses)
+    epoch_losses_val.append(epoch_loss)
+    with open("%s/epoch_losses_val.pkl" % model_dir, "wb") as file:
+        pickle.dump(epoch_losses_val, file)
+    print ("val loss: %g" % epoch_loss)
+    plt.figure(1)
+    plt.plot(epoch_losses_val, "k^")
+    plt.plot(epoch_losses_val, "k")
+    plt.ylabel("loss")
+    plt.xlabel("epoch")
+    plt.title("val loss per epoch")
+    plt.savefig("{}/epoch_losses_val_{}.png".format(model_dir,model_id))
+    plt.close(1)
 
 
   
