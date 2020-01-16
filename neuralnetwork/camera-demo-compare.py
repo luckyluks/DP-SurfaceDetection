@@ -9,8 +9,14 @@ from torch.autograd import Variable
 from PIL import Image
 import functions as func
 import statistics as st
+import time
 
 from networks import *
+
+def generate_save_date_name_short(file_ending, prefix="", suffix=""):
+    time_str = str(time.strftime("%b%d-%H%M%S"))
+    full_suffix = ( prefix+"_" if prefix!="" else "") + time_str + ( "_"+suffix if suffix!="" else "") + file_ending
+    return full_suffix
 
 
 #decide color thresholds
@@ -20,6 +26,9 @@ bThresh = 60
 
 #decide to run quick demo for just show with only network or 'full demo' with bg sub and statistics
 fullDemo = False
+
+#decide to record the demo for just show with only network or 'full demo' with bg sub and statistics
+recordDemo = True
 
 print("-"*110)
 print("LIVE DEMO:")
@@ -34,6 +43,14 @@ from modeling.sync_batchnorm.replicate import patch_replication_callback
 from modeling.deeplab import *
 network_DL = DeepLab(num_classes=2)
 
+# add video stream writer
+if recordDemo:
+    codec = cv2.VideoWriter_fourcc(*'mp4v')
+    framerate = 6
+    frame_width = 1920
+    frame_height = 480
+    file_path_rgb = os.path.join("neuralnetwork/recordings", generate_save_date_name_short('.mp4', "backup-vid" ))
+    out = cv2.VideoWriter(file_path_rgb, codec, framerate, (frame_width,frame_height))
 
 model_dir = os.path.join(os.getcwd(),"neuralnetwork","model")
 model_dir_files = os.listdir(model_dir)
@@ -244,6 +261,7 @@ try:
         prediction_DL = torch.argmax(prediction_DL, dim=1)
 
         tensor_image = tensor_image[0].cpu().detach().numpy().transpose((1,2,0))
+        tensor_image_color = tensor_image
         tensor_image = cv2.cvtColor(tensor_image, cv2.COLOR_BGR2GRAY)
         prediction_image_U = prediction_U[0].cpu().detach().numpy().transpose((0,1)).astype(dtype=np.uint8)
         prediction_image_DL = prediction_DL[0].cpu().detach().numpy().transpose((0,1)).astype(dtype=np.uint8)
@@ -290,21 +308,31 @@ try:
 
         # Show images
         cv2.namedWindow('frames', cv2.WINDOW_AUTOSIZE)
-        cv2.imshow('frames', combimg)
         key = cv2.waitKey(1)
+
+        # save frame
+        prediction_image_U = cv2.cvtColor(prediction_image_U, cv2.COLOR_GRAY2RGB)
+        prediction_image_DL = cv2.cvtColor(prediction_image_DL, cv2.COLOR_GRAY2RGB)
+        combimg = np.hstack((tensor_image_color,prediction_image_U, prediction_image_DL))
+        cv2.imshow('frames', combimg)
+        
+        if recordDemo:
+            temp = np.uint8(combimg*255)
+            out.write(temp)
 
         # increase framecounter
         totalFrame +=1
 
         # Press esc or 'q' to close the image window
         if key & 0xFF == ord('q') or key == 27:
-            
             break
     
 finally:
     # Stop streaming
     pipeline.stop()
     cv2.destroyAllWindows()
+    if recordDemo:
+        out.release()
 
     if fullDemo:
         meanIouBgSub = st.mean(iouBgSubList)

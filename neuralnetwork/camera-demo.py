@@ -9,8 +9,17 @@ from torch.autograd import Variable
 from PIL import Image
 import functions as func
 import statistics as st
+import time
 
+# costum imports
 from networks import *
+from modeling.sync_batchnorm.replicate import patch_replication_callback
+from modeling.deeplab import *
+
+def generate_save_date_name_short(file_ending, prefix="", suffix=""):
+    time_str = str(time.strftime("%b%d-%H%M%S"))
+    full_suffix = ( prefix+"_" if prefix!="" else "") + time_str + ( "_"+suffix if suffix!="" else "") + file_ending
+    return full_suffix
 
 
 #decide color thresholds
@@ -21,19 +30,29 @@ bThresh = 60
 #decide to run quick demo for just show with only network or 'full demo' with bg sub and statistics
 fullDemo = False
 
+#decide to record the demo for just show with only network or 'full demo' with bg sub and statistics
+recordDemo = False
+
 print("-"*110)
 print("LIVE DEMO:")
 
-# Load newest model or specify one
-model_id = 5       # specify or it will auto-select newest
+# Load newest model or specify one # specify or it will auto-select newest
+model_id = 20      
 
+# choose network 
 network =  U_Net(img_ch=3,output_ch=2)
+network = DeepLab(num_classes=2)
 
-# from modeling.sync_batchnorm.replicate import patch_replication_callback
-# from modeling.deeplab import *
-# network = DeepLab(num_classes=2)
+# add video stream writer
+if recordDemo:
+    codec = cv2.VideoWriter_fourcc(*'mp4v')
+    framerate = 30
+    frame_width = 1280
+    frame_height = 480
+    file_path_rgb = os.path.join("neuralnetwork/recordings", generate_save_date_name_short('.mp4', "backup-vid" ))
+    out = cv2.VideoWriter(file_path_rgb, codec, framerate, (frame_width,frame_height))
 
-
+# load model
 model_dir = os.path.join(os.getcwd(),"neuralnetwork","model")
 model_dir_files = os.listdir(model_dir)
 
@@ -224,6 +243,7 @@ try:
         prediction = torch.argmax(prediction, dim=1)
 
         tensor_image = tensor_image[0].cpu().detach().numpy().transpose((1,2,0))
+        tensor_image_color = tensor_image
         tensor_image = cv2.cvtColor(tensor_image, cv2.COLOR_BGR2GRAY)
         prediction_image = prediction[0].cpu().detach().numpy().transpose((0,1)).astype(dtype=np.uint8)
         # prediction_image = prediction[0].cpu().detach().numpy().transpose((0,1))
@@ -231,7 +251,7 @@ try:
         inferenceTimeNetwork = (e2 - e1) / cv2.getTickFrequency()
 
 
-        np.max(np.unique(prediction_image.astype(dtype=np.uint8)))
+        prediction_image = cv2.cvtColor(prediction_image, cv2.COLOR_GRAY2RGB)
 
 
 
@@ -248,7 +268,7 @@ try:
             imagesBottom = np.hstack((bgsub,prediction_image))
             combimg = np.vstack((imagesTop,imagesBottom))
         else:
-            combimg = np.hstack((tensor_image,prediction_image))
+            combimg = np.hstack((tensor_image_color,prediction_image))
 
         if fullDemo: 
             #reformat some frames for IoU calculation
@@ -272,6 +292,12 @@ try:
         cv2.imshow('frames', combimg)
         key = cv2.waitKey(1)
 
+
+        # save frames
+        if recordDemo:
+            temp = np.uint8(combimg*255)
+            out.write(temp)
+
         # increase framecounter
         totalFrame +=1
 
@@ -284,6 +310,8 @@ finally:
     # Stop streaming
     pipeline.stop()
     cv2.destroyAllWindows()
+    if recordDemo:
+        out.release()
 
     if fullDemo:
         meanIouBgSub = st.mean(iouBgSubList)
