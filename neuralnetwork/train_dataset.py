@@ -30,10 +30,10 @@ from deeplabv3 import *
 
 # setup
 num_epochs = 4
-batch_size = 32# unet 8
+batch_size = 16# unet 8
 batch_size_eval = 8 # unet 2
 learning_rate = 0.00001
-model_id = "33"
+model_id = "34"
 
 train_resize_size = (320, 240)  #(320, 240) #(512, 512) # (640, 480)
 
@@ -52,6 +52,7 @@ train_resize_size = (320, 240)  #(320, 240) #(512, 512) # (640, 480)
 #31: DL 4*0.0001 (320, 240) -with color jitter
 #32: DL 4*0.0001 (320, 240) -with rand  flip
 #33: DL 4*0.0001 (320, 240) -with rand crop
+#34: DL 4*0.0001 (320, 240) -with all
 
 # Set paths -- splits if validation folders are not defined!!
 if platform.system()=="Windows":
@@ -215,37 +216,37 @@ for epoch in range(num_epochs):
 
     print ("####")
 
-    ############################################################################
-    # val:
-    ############################################################################
-    network.eval() # (set in evaluation mode, this affects BatchNorm and dropout)
-    batch_losses = []
-    for step, (imgs, label_imgs, file_name) in enumerate(tqdm(val_loader)):
-        with torch.no_grad(): # (corresponds to setting volatile=True in all variables, this is done during inference to reduce memory consumption)
-            imgs = Variable(imgs).to(device) # (shape: (batch_size, 3, img_h, img_w))
-            label_imgs = label_imgs.squeeze(1)
-            label_imgs = Variable(label_imgs.type(torch.LongTensor)).to(device) # (shape: (batch_size, img_h, img_w))
+    # ############################################################################
+    # # val:
+    # ############################################################################
+    # network.eval() # (set in evaluation mode, this affects BatchNorm and dropout)
+    # batch_losses = []
+    # for step, (imgs, label_imgs, file_name) in enumerate(tqdm(val_loader)):
+    #     with torch.no_grad(): # (corresponds to setting volatile=True in all variables, this is done during inference to reduce memory consumption)
+    #         imgs = Variable(imgs).to(device) # (shape: (batch_size, 3, img_h, img_w))
+    #         label_imgs = label_imgs.squeeze(1)
+    #         label_imgs = Variable(label_imgs.type(torch.LongTensor)).to(device) # (shape: (batch_size, img_h, img_w))
 
-            outputs = network(imgs) # (shape: (batch_size, num_classes, img_h, img_w))
+    #         outputs = network(imgs) # (shape: (batch_size, num_classes, img_h, img_w))
 
-            # compute the loss:
-            loss = loss_fn(outputs, label_imgs)
-            loss_value = loss.data.cpu().numpy()
-            batch_losses.append(loss_value)
+    #         # compute the loss:
+    #         loss = loss_fn(outputs, label_imgs)
+    #         loss_value = loss.data.cpu().numpy()
+    #         batch_losses.append(loss_value)
 
-    epoch_loss = np.mean(batch_losses)
-    epoch_losses_val.append(epoch_loss)
-    with open("%s/epoch_losses_val.pkl" % model_dir, "wb") as file:
-        pickle.dump(epoch_losses_val, file)
-    print ("val loss: %g" % epoch_loss)
-    plt.figure(1)
-    plt.plot(epoch_losses_val, "k^")
-    plt.plot(epoch_losses_val, "k")
-    plt.ylabel("loss")
-    plt.xlabel("epoch")
-    plt.title("val loss per epoch")
-    plt.savefig("{}/epoch_losses_val_{}.png".format(model_dir,model_id))
-    plt.close(1)
+    # epoch_loss = np.mean(batch_losses)
+    # epoch_losses_val.append(epoch_loss)
+    # with open("%s/epoch_losses_val.pkl" % model_dir, "wb") as file:
+    #     pickle.dump(epoch_losses_val, file)
+    # print ("val loss: %g" % epoch_loss)
+    # plt.figure(1)
+    # plt.plot(epoch_losses_val, "k^")
+    # plt.plot(epoch_losses_val, "k")
+    # plt.ylabel("loss")
+    # plt.xlabel("epoch")
+    # plt.title("val loss per epoch")
+    # plt.savefig("{}/epoch_losses_val_{}.png".format(model_dir,model_id))
+    # plt.close(1)
 
 
   
