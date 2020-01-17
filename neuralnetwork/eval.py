@@ -43,7 +43,7 @@ output_folder = "/media/zed/Data/gtdata/data_splitted_M-building/predictions"
 
 # setup
 batch_size = 1
-model_id = 33
+model_id = 34
 
 image_paths = os.listdir(path_train)
 target_paths = os.listdir(path_test)

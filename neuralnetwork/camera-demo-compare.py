@@ -25,10 +25,10 @@ gThresh = 60
 bThresh = 60
 
 #decide to run quick demo for just show with only network or 'full demo' with bg sub and statistics
-fullDemo = False
+fullDemo = True
 
-#decide to record the demo for just show with only network or 'full demo' with bg sub and statistics
-recordDemo = True
+#decide to record the demo 
+recordDemo = False
 
 print("-"*110)
 print("LIVE DEMO:")
@@ -108,9 +108,11 @@ if fullDemo:
     sensor_rgb.set_option(rs.option.enable_auto_white_balance, 0.0)
 
     iouBgSubList = []
-    iouNetworkList = []
+    iouNetworkList_U = []
+    iouNetworkList_DL = []
     inferenceTimeBgSubList = []
-    inferenceTimeNetworkList = []
+    inferenceTimeNetworkList_U = []
+    inferenceTimeNetworkList_DL = []
 
 else:
     sensor_rgb.set_option(rs.option.enable_auto_exposure, 1.0)
@@ -246,28 +248,38 @@ try:
         # Convert to pytorch tensor
         tensor_image = Variable(TF.to_tensor(color_image_PIL).unsqueeze(0)).to(device)
 
+        e2 = cv2.getTickCount()
+        inferenceTimeImage = (e2-e1) / cv2.getTickFrequency()
+
+        e1 = cv2.getTickCount()
         # Do prediciton
         prediction_U = network_U(tensor_image)
         prediction_U = prediction_U.squeeze(1)
         prediction_U = prediction_U.cpu()
+
+        prediction_U = torch.argmax(prediction_U, dim=1)
+        prediction_image_U = prediction_U[0].cpu().detach().numpy().transpose((0,1)).astype(dtype=np.uint8)
+        e2 = cv2.getTickCount()
+        inferenceTimeNetwork_U = ((e2-e1) / cv2.getTickFrequency()) + inferenceTimeImage
+
+        e1 = cv2.getTickCount()
         prediction_DL = network_DL(tensor_image)
         prediction_DL = prediction_DL.squeeze(1)
         prediction_DL = prediction_DL.cpu()
-        tensor_image = tensor_image.cpu()
-
+       
+        prediction_DL = torch.argmax(prediction_DL, dim=1)
+        prediction_image_DL = prediction_DL[0].cpu().detach().numpy().transpose((0,1)).astype(dtype=np.uint8)
+        e2 = cv2.getTickCount()
+        inferenceTimeNetwork_DL = ((e2-e1) / cv2.getTickFrequency()) + inferenceTimeImage
 
         # prediction_numpy = prediction[0].cpu().detach().numpy()
-        prediction_U = torch.argmax(prediction_U, dim=1)
-        prediction_DL = torch.argmax(prediction_DL, dim=1)
+        # prediction_image = prediction[0].cpu().detach().numpy().transpose((0,1))
+        
 
+        tensor_image = tensor_image.cpu()
         tensor_image = tensor_image[0].cpu().detach().numpy().transpose((1,2,0))
         tensor_image_color = tensor_image
         tensor_image = cv2.cvtColor(tensor_image, cv2.COLOR_BGR2GRAY)
-        prediction_image_U = prediction_U[0].cpu().detach().numpy().transpose((0,1)).astype(dtype=np.uint8)
-        prediction_image_DL = prediction_DL[0].cpu().detach().numpy().transpose((0,1)).astype(dtype=np.uint8)
-        # prediction_image = prediction[0].cpu().detach().numpy().transpose((0,1))
-        e2 = cv2.getTickCount()
-        inferenceTimeNetwork = (e2 - e1) / cv2.getTickFrequency()
 
 
         # np.max(np.unique(prediction_image.astype(dtype=np.uint8)))
@@ -284,7 +296,7 @@ try:
             bgsub = dframe
             # Stack all images
             imagesTop = np.hstack((tensor_image, groundTruth))
-            imagesBottom = np.hstack((bgsub,prediction_image))
+            imagesBottom = np.hstack((bgsub,prediction_image_DL))
             combimg = np.vstack((imagesTop,imagesBottom))
         else:
             combimg = np.hstack((tensor_image,prediction_image_U, prediction_image_DL))
@@ -296,24 +308,27 @@ try:
 
             #print IoU and inference time every second
             ioubgsub = func.intersectionOverUnion(bgsubc,groundTruthc)
-            iounetwork = func.intersectionOverUnion(prediction_image,groundTruthc)
+            iounetwork_U = func.intersectionOverUnion(prediction_image_U,groundTruthc)
+            iounetwork_DL = func.intersectionOverUnion(prediction_image_DL,groundTruthc)
             if(totalFrame % 5 == 0):
                 os.system('clear')
-                print('IoU for background subtraction: {} for neural network: {}'.format(ioubgsub,iounetwork))
-                print('Inference time for background subtraction: {} for neural network: {}'.format(inferenceTimeBGsub,inferenceTimeNetwork))
+                print('IoU for background subtraction: {} for U-net: {} for DeepLab: {}'.format(ioubgsub,iounetwork_U,iounetwork_DL))
+                print('Inference time for background subtraction: {} for U-net: {} for DeepLab: {}'.format(inferenceTimeBGsub,inferenceTimeNetwork_U,inferenceTimeNetwork_DL))
             iouBgSubList.append(np.nanmean(ioubgsub))
-            iouNetworkList.append(np.nanmean(iounetwork))
+            iouNetworkList_U.append(np.nanmean(iounetwork_U))
+            iouNetworkList_DL.append(np.nanmean(iounetwork_DL))
             inferenceTimeBgSubList.append(inferenceTimeBGsub)
-            inferenceTimeNetworkList.append(inferenceTimeNetwork)
+            inferenceTimeNetworkList_U.append(inferenceTimeNetwork_U)
+            inferenceTimeNetworkList_DL.append(inferenceTimeNetwork_DL)
 
         # Show images
         cv2.namedWindow('frames', cv2.WINDOW_AUTOSIZE)
         key = cv2.waitKey(1)
 
         # save frame
-        prediction_image_U = cv2.cvtColor(prediction_image_U, cv2.COLOR_GRAY2RGB)
-        prediction_image_DL = cv2.cvtColor(prediction_image_DL, cv2.COLOR_GRAY2RGB)
-        combimg = np.hstack((tensor_image_color,prediction_image_U, prediction_image_DL))
+        # prediction_image_U = cv2.cvtColor(prediction_image_U, cv2.COLOR_GRAY2RGB)
+        # prediction_image_DL = cv2.cvtColor(prediction_image_DL, cv2.COLOR_GRAY2RGB)
+        # combimg = np.hstack((tensor_image_color,prediction_image_U, prediction_image_DL))
         cv2.imshow('frames', combimg)
         
         if recordDemo:
@@ -336,13 +351,15 @@ finally:
 
     if fullDemo:
         meanIouBgSub = st.mean(iouBgSubList)
-        meanIouNetwork = st.mean(iouNetworkList) 
+        meanIouNetwork_U = st.mean(iouNetworkList_U) 
+        meanIouNetwork_DL = st.mean(iouNetworkList_DL) 
         meanInferenceTimeBgSub = st.mean(inferenceTimeBgSubList)
-        meanInferenceTimeNetwork = st.mean(inferenceTimeNetworkList)
+        meanInferenceTimeNetwork_U = st.mean(inferenceTimeNetworkList_U)
+        meanInferenceTimeNetwork_DL = st.mean(inferenceTimeNetworkList_DL)
 
         #here mean IoU is just for foreground 
-        print('mean IoU for background subtraction: {} for neural network: {}'.format(meanIouBgSub,meanIouNetwork))
-        print('mean Inference time for background subtraction: {} for neural network: {}'.format(meanInferenceTimeBgSub,meanInferenceTimeNetwork))
+        print('mean IoU for background subtraction: {} for U-net: {} for DeepLab: {}'.format(meanIouBgSub,meanIouNetwork_U,meanIouNetwork_DL))
+        print('mean Inference time for background subtraction: {} for U-net: {} for DeepLab: {}'.format(meanInferenceTimeBgSub,meanInferenceTimeNetwork_U,meanInferenceTimeNetwork_DL))
 
 
 # cap = cv2.VideoCapture(1)
