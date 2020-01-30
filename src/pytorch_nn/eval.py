@@ -23,14 +23,14 @@ import torch.optim as optim
 import torch.nn.functional as F
 
 from dataset import *
-from networks import *
+from modeling.unet import *
 import functions as func
 
 
 # setup - choose model and paths for validation frames and groundtruth frames
-model_id = 34
-path_train = "C:\\Users\\lukas\\workspace\\data\\GrabCutGroundTruthDec10\\data_splitted_M-building\\FramesVal"
-path_test = "C:\\Users\\lukas\\workspace\\data\\GrabCutGroundTruthDec10\\data_splitted_M-building\\trueFramesVal"
+model_id = 20
+path_train = "C:\\Users\\lukas\\workspace\\data\\GrabCutGroundTruthDec10\\data_splitted\\FramesVal"
+path_test = "C:\\Users\\lukas\\workspace\\data\\GrabCutGroundTruthDec10\\data_splitted\\trueFramesVal"
 output_folder = "C:\\Users\\lukas\\workspace\\data\\GrabCutGroundTruthDec10\\data_splitted_M-building\\predictions"
 
 
@@ -50,7 +50,7 @@ print("using device: ", device)
 print("val_data_loader files:", len(val_loader.dataset))
 
 # load network
-model_dir = os.path.join(os.getcwd(),"pytorch_nn","model")
+model_dir = os.path.join(os.getcwd(),"src","pytorch_nn","model")
 model_dir_files = os.listdir(model_dir)
 
 # choose model "automatically" - see try/except below
@@ -62,7 +62,7 @@ if model_id == 0:
     model_id = max(previous_model_ids)
 model_id_checkpoints = [ string for string in model_dir_files if "model_"+str(model_id) in string]
 epoch_numbers = [int(filename.split("_")[-1].split(".")[0]) for filename in model_id_checkpoints]
-model_dir = os.path.join(os.getcwd(),"pytorch_nn","model")
+model_dir = os.path.join(os.getcwd(),"src","pytorch_nn","model")
 model_file_name = "model_" + str(model_id) + "_epoch_" + str(max(epoch_numbers)) + ".pth"
 state = torch.load(os.path.join(model_dir, model_file_name))
 try:

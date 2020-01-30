@@ -16,7 +16,7 @@ import functions as func
 import statistics as st
 import time
 
-from networks import *
+from modeling.unet import *
 from utils import *
 from modeling.sync_batchnorm.replicate import patch_replication_callback
 from modeling.deeplab import *

@@ -25,7 +25,7 @@ import torch.nn.functional as F
 
 # costum imports
 from dataset import *
-from networks import *
+from modeling.unet import *
 from modeling.sync_batchnorm.replicate import patch_replication_callback
 from modeling.deeplab import *
 

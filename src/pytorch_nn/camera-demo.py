@@ -17,7 +17,7 @@ import statistics as st
 import time
 
 # costum imports
-from networks import *
+from modeling.unet import *
 from modeling.sync_batchnorm.replicate import patch_replication_callback
 from modeling.deeplab import *
 from utils import *
