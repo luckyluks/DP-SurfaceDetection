@@ -8,6 +8,11 @@ Paper Title: Usable surface detection on top-view camera data, using automatic g
 ### Documents
 The final report: will be added soon
 
+### Sample screenshot
+This screenshot shows a live demo screenshot:  
+the camera live frame is on the left and the deeplab segmentation frame on the right, black is predicted background and white is predicted foreground. The model was trained for 10 epochs a ~7000 frames
+![live demo screenshot](https://raw.githubusercontent.com/luckyluks/DP-SurfaceDetection/master/sample_images/deeplab_live_demo_screenshot.png?token=AGTSTPTOHAOK25TZFKY2STS6HRPFI)
+
 ### Directory content
 - recordings: sample video we presented on the mini fair
 - src:        all source code
