@@ -35,5 +35,5 @@ the camera live frame is on the left and the deeplab segmentation frame on the r
     - utils.py: contains utility function
     
 ### Acknowledgements
-PyTorch Deeplabv3+ model[fregu856/pytorch-deeplab-xception](https://github.com/fregu856/pytorch-deeplab-xception)  
-PyTorch UNet model[LeeJunHyun/Image_Segmentation](https://github.com/LeeJunHyun/Image_Segmentation)
+PyTorch Deeplabv3+ model: [fregu856/pytorch-deeplab-xception](https://github.com/fregu856/pytorch-deeplab-xception)  
+PyTorch UNet model: [LeeJunHyun/Image_Segmentation](https://github.com/LeeJunHyun/Image_Segmentation)
