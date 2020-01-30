@@ -4,7 +4,7 @@
 # ignore data folder
 
 data/
-**/model/model_*
+#**/model/model_*
 
 pretrained_models/
 
