@@ -4,7 +4,6 @@ Course: [SSY226] Design Project in Systems, Controls and Mechatronics
 Group: 29   
 Topic: GPSS - Control of a robot fleet with machine learning and computer vision  
 Paper Title: Usable surface detection on top-view camera data, using automatic ground truth generation for binary semantic segmentation  
-Members: Mattias Juhlin, Victor Brandt, Lukas Rauh, Zhanyu Tuo  
 
 ### Documents
 The final report: will be added soon
